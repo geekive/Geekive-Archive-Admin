@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp"%>
 
 <c:set var="pageContent">
-	<form id="form">
+	<form id="form" class="article-form">
 		<script>
 			let rwc = new ResponsiveWebController();
 			rwc.addAndRemoveDflexAt(810);
@@ -29,6 +29,11 @@
 			<c:param name="name">flagPrivate</c:param>
 			<c:param name="codeType">YES_NO</c:param>
 			<c:param name="data">${empty articleMap.flagPrivate ? 'N' : articleMap.flagPrivate}</c:param>
+		</c:import>
+
+		<c:import url="/option/article-viewers">
+			<c:param name="label">allowed viewers</c:param>
+			<c:param name="hide">${articleMap.flagPrivate ne 'Y'}</c:param>
 		</c:import>
 
 		<c:import url="/option/image">
@@ -65,6 +70,7 @@
 	
 	<script>
 		$(document).ready(function(){
+
 			/* event :: s */
 			// save button
 			$('#btn-save').on('click', function(){			
@@ -92,12 +98,16 @@
 					return
 				}
 
-	   			$.ajax({
+				const formData = $('#form').getFormData();
+				if ($('input[name="flagPrivate"]:checked').val() === 'Y') {
+					formData.append('viewerUids', $('#article-viewer-uids').val());
+				}
+				$.ajax({
 					type		: 'post',
 					url			: './save',
 					contentType : false,
 					processData : false,
-					data		: $('#form').getFormData(),
+					data		: formData,
 					success		: function(data){
 						if(data.resultCode == 1){
 							openModal({

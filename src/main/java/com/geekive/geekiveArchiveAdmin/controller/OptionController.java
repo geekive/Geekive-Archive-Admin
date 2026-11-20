@@ -79,6 +79,13 @@ public class OptionController {
 		modelMap.put("radioList"	, radioList);
 		return "option/radio";
 	}
+
+	@GetMapping(value = "/article-viewers")
+	public String articleViewers(ModelMap modelMap, OptionVO optionVO) {
+		modelMap.put("optionLabel", optionVO.getOptionLabel());
+		modelMap.put("hide", optionVO.getHide());
+		return "option/article-viewers";
+	}
 	
 	@GetMapping(value = "/search")
 	public String search(HttpServletRequest request, ModelMap modelMap, OptionVO optionVO) throws Exception{

@@ -1,7 +1,11 @@
 package com.geekive.geekiveArchiveAdmin.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,6 +84,12 @@ public class ContentController {
 		parameterMap.put("articleUid", articleUid);
 		
 		GeekiveMap articleMap = contentService.selectArticleForView(parameterMap);
+		if (Util.isEmpty(articleMap)) {
+			return "redirect:/content/article/list";
+		}
+		if ("Y".equals(articleMap.getString("flagPrivate"))) {
+			modelMap.put("articleViewers", contentService.selectArticleViewers(articleUid));
+		}
 		modelMap.put("title"		, "article");
 		modelMap.put("articleMap"	, articleMap);
 		return "content/article/view";
@@ -97,23 +108,40 @@ public class ContentController {
 				return "redirect:/content/article/list";
 			}
 			modelMap.put("articleMap", articleMap);
+			modelMap.put("articleViewers", contentService.selectArticleViewers(articleUid));
 		}
 		modelMap.put("title", "article");
 		return "content/article/write";
 	}
+
+	@ResponseBody
+	@GetMapping(value = "/article/viewer-search")
+	public List<Map<String, String>> articleViewerSearch(@RequestParam("query") String query) {
+		String term = query.trim();
+		if (term.isEmpty() || term.length() > 40) {
+			return Collections.emptyList();
+		}
+		return contentService.searchArticleViewers(new GeekiveMap().getString("userUid"), term);
+	}
 	
 	@ResponseBody
 	@PostMapping(value = "/article/save", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public GeekiveMap articleSave(@RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail, @RequestPart("data") GeekiveMap gMap) throws Exception{
+	public GeekiveMap articleSave(@RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
+			@RequestPart("data") GeekiveMap gMap, @RequestParam(value = "viewerUids", required = false) String viewerUids) throws Exception{
 		
 		String url = Util.getFileServerUploadUrl() + "/file";
 
 		try {
+			gMap.put("userUid", new GeekiveMap().getString("userUid"));
 			Object flagPrivate = gMap.get("flagPrivate");
 			if (gMap.containsKey("flagPrivate") && !"Y".equals(flagPrivate) && !"N".equals(flagPrivate)) {
 				gMap.put("resultCode", 0);
 				gMap.put("resultMessage", "select a valid private setting.");
 				return gMap;
+			}
+			List<String> viewers = viewerUids == null ? null : parseViewerUids(viewerUids);
+			if (viewers != null && !"Y".equals(flagPrivate) && !viewers.isEmpty()) {
+				throw new IllegalArgumentException("Only private articles can have selected viewers.");
 			}
 			if(thumbnail != null) {
 				GeekiveConnector gConntector = new GeekiveConnector.Builder(url).data(thumbnail).build();
@@ -121,21 +149,44 @@ public class ContentController {
 				gMap.put("thumbnailUid"	, responseMap.getString("fileUid"));
 			}
 
-			if(Util.isEmpty(gMap.getString("articleUid"))) { 
+			boolean newArticle = Util.isEmpty(gMap.getString("articleUid"));
+			if(newArticle) {
 				gMap.put("articleUid", Util.generateUID("ATC"));
-			} 
-			contentService.upsertArticle(gMap);
+			}
+			contentService.saveArticle(gMap, newArticle, viewers);
+			gMap.put("resultCode", 1);
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
 			gMap.put("resultMessage", e.getMessage());
 		}
 		return gMap;
 	}
+
+	private List<String> parseViewerUids(String value) {
+		Set<String> viewers = new LinkedHashSet<>();
+		if (value.isEmpty()) {
+			return new ArrayList<>(viewers);
+		}
+		if (value.length() > 4099) {
+			throw new IllegalArgumentException("Select at most 100 viewers.");
+		}
+		for (String viewer : value.split(",", -1)) {
+			if (viewer.isEmpty() || viewer.length() > 40) {
+				throw new IllegalArgumentException("Invalid viewer selection.");
+			}
+			viewers.add(viewer);
+		}
+		if (viewers.size() > 100) {
+			throw new IllegalArgumentException("Select at most 100 viewers.");
+		}
+		return new ArrayList<>(viewers);
+	}
 	
 	@ResponseBody
 	@PostMapping(value = "/article/delete")
 	public GeekiveMap articleDelete(@RequestBody GeekiveMap gMap) throws Exception{
 		try {
+			gMap.put("userUid", new GeekiveMap().getString("userUid"));
 			if(Util.isNotEmpty(gMap.getString("articleUid"))) { 
 				contentService.deleteArticle(gMap);
 			}else {

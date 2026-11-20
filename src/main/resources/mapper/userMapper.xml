@@ -2,6 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.geekive.geekiveArchiveAdmin.mapper.UserMapper">
+	<sql id="archiveNameUpdateAvailable">
+		(ARCHIVE_NAME_UPDATE_DATE IS NULL OR ARCHIVE_NAME_UPDATE_DATE <![CDATA[<=]]> NOW() - INTERVAL 7 DAY)
+	</sql>
 
 	<select id="selectUser" resultType="GeekiveMap">
 		/* userMapper.selectUser */
@@ -10,7 +13,7 @@
 			, U.USER_NAME		AS userName
 			, U.ARCHIVE_NAME	AS archiveName
     		, CASE 
-        		WHEN DATEDIFF(CURDATE(), U.ARCHIVE_NAME_UPDATE_DATE) <![CDATA[>]]> 7 THEN 'Y'
+				WHEN <include refid="archiveNameUpdateAvailable"/> THEN 'Y'
         		ELSE ''
     			END 			AS flagArchiveNameUpdateAvailable
 			, F.URL_PATH 		AS profileImageUrlPath
@@ -45,7 +48,8 @@
 	        	USER
 	        WHERE 
 	        	USER_UID = #{userUid}
-	        	AND DATEDIFF(CURDATE(), ARCHIVE_NAME_UPDATE_DATE) <![CDATA[>]]> 7
+				AND FLAG_DELETED = 'N'
+				AND <include refid="archiveNameUpdateAvailable"/>
 		) AS FLAG_EXISTENCE
 	</select>
 	
@@ -54,7 +58,10 @@
 		UPDATE USER
 		SET
 			USER_NAME 		= #{userName}
-			, ARCHIVE_NAME 	= #{archiveName}
+			<if test="archiveName != null">
+				, ARCHIVE_NAME = #{archiveName}
+				, ARCHIVE_NAME_UPDATE_DATE = NOW()
+			</if>
 			, UPDATE_DATE	= NOW()
 			, UPDATE_USER	= #{userUid}
 			<if test="profileImageUid != null and profileImageUid != ''">
@@ -63,11 +70,16 @@
 			<if test="password != null and password != ''">
 				, PASSWORD = #{password}
 			</if>
-			<if test="flagArchiveNameUpdate != null and flagArchiveNameUpdate != ''">
-				, ARCHIVE_NAME_UPDATE_DATE = NOW()
-			</if>
 		WHERE
 			USER_UID 		= #{userUid}
+			AND FLAG_DELETED = 'N'
+			<if test="archiveName != null">
+				AND BINARY ARCHIVE_NAME <![CDATA[<=>]]> BINARY #{previousArchiveName,jdbcType=VARCHAR}
+				AND <include refid="archiveNameUpdateAvailable"/>
+			</if>
+			<if test="currentPasswordHash != null">
+				AND PASSWORD = #{currentPasswordHash}
+			</if>
 	</update>
 	
 	<update id="deleteUser" parameterType="GeekiveMap" >

@@ -2,7 +2,7 @@
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp"%>
 
 <c:set var="pageContent">
-	<form id="form">
+	<form id="form" class="article-form">
 		<script>
 			let rwc = new ResponsiveWebController();
 			rwc.addAndRemoveDflexAt(810);
@@ -19,6 +19,29 @@
 			<div class="opt-label col-1 d-flex align-items-center justify-content-center">activation state</div>
 			<div class="opt-content col d-flex align-items-center">${articleMap.flagActivated}</div>
 		</div>
+
+		<c:if test="${articleMap.flagPrivate eq 'Y'}">
+			<div class="opt-wrapper row">
+				<div class="opt-label col-1 d-flex align-items-center justify-content-center text-center">allowed viewers</div>
+				<div class="opt-content col d-flex align-items-center">
+					<c:choose>
+						<c:when test="${empty articleViewers}">
+							<span>Only you</span>
+						</c:when>
+						<c:otherwise>
+							<ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
+								<c:forEach items="${articleViewers}" var="viewer">
+									<li class="badge article-viewer-badge bg-white text-dark border border-dark rounded-pill d-inline-flex align-items-center gap-1 fw-normal text-wrap text-break mw-100">
+										<img class="article-viewer-avatar rounded-circle flex-shrink-0" src="<c:out value='${viewer.profileImageUrlPath}'/>" alt="" onerror="this.onerror = null; getErrorImageUrl(this, 'profile');">
+										<span><c:out value="${viewer.archiveName}"/></span>
+									</li>
+								</c:forEach>
+							</ul>
+						</c:otherwise>
+					</c:choose>
+				</div>
+			</div>
+		</c:if>
 		
 		<div class="opt-wrapper row">
 			<div class="opt-label col-1 d-flex align-items-center justify-content-center">thumbnail</div>

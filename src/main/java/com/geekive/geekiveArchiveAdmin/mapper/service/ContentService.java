@@ -6,10 +6,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.geekive.geekiveArchiveAdmin.common.CryptoUtil;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveMap;
 import com.geekive.geekiveArchiveAdmin.mapper.ContentMapper;
+import com.geekive.geekiveArchiveAdmin.mapper.ArticleViewerMapper;
 import com.geekive.geekiveArchiveAdmin.mapper.LoginMapper;
 import com.geekive.geekiveArchiveAdmin.mapper.SystemMapper;
 
@@ -21,6 +23,35 @@ public class ContentService implements ContentMapper{
 	
 	@Autowired
 	ContentMapper contentMapper;
+
+	@Autowired
+	ArticleViewerMapper articleViewerMapper;
+
+	public List<Map<String, String>> searchArticleViewers(String userUid, String query) {
+		return articleViewerMapper.searchUsers(userUid, query);
+	}
+
+	public List<Map<String, String>> selectArticleViewers(String articleUid) {
+		return articleViewerMapper.selectViewers(articleUid);
+	}
+
+	@Transactional
+	public void saveArticle(GeekiveMap article, boolean newArticle, List<String> viewerUids) {
+		String articleUid = article.getString("articleUid");
+		String userUid = article.getString("userUid");
+		if (!newArticle && articleViewerMapper.lockOwnedArticle(articleUid, userUid) == null) {
+			throw new IllegalArgumentException("Article not found.");
+		}
+		article.put("newArticle", newArticle);
+		upsertArticle(article);
+		if ("N".equals(article.get("flagPrivate")) || viewerUids != null) {
+			articleViewerMapper.deleteViewers(articleUid);
+			if ("Y".equals(article.get("flagPrivate")) && viewerUids != null && !viewerUids.isEmpty()
+					&& articleViewerMapper.insertViewers(articleUid, userUid, viewerUids) != viewerUids.size()) {
+				throw new IllegalArgumentException("One or more selected users are unavailable.");
+			}
+		}
+	}
 
 	@Override
 	public int selectArticleListCount(GeekiveMap gMap) {

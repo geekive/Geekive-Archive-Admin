@@ -20,6 +20,11 @@ form {
 }
 
 /* common */
+.form-control,
+.form-select {
+	border-color: #292929;
+}
+
 .hide {
 	display: none !important;
 }
@@ -93,7 +98,8 @@ tbody {
 
 /* toast */
 .toast-bg {
-	background-color: rgba(255, 190, 152, 1);
+	background-color: #292929;
+	color: #fff;
 }
 
 /* balloon */
@@ -254,6 +260,18 @@ tbody {
 	border-right: 1px solid black;
 }
 
+.article-form .opt-label,
+.profile-form .opt-label {
+	white-space: nowrap;
+}
+
+@media (min-width: 811px) {
+	.article-form .opt-label,
+	.profile-form .opt-label {
+		width: 180px;
+	}
+}
+
 .opt-chkbox {
 	width: 205px;
 }
@@ -269,6 +287,92 @@ tbody {
 
 .opt-txt {
 	width: 65%;
+}
+
+.article-viewer-suggestions {
+	z-index: 1000;
+	max-height: 16rem;
+}
+
+.article-viewer-suggestions [role="status"]:empty {
+	display: none;
+}
+
+.article-viewer-selection:has(> li) {
+	margin-top: 0.5rem;
+}
+
+.article-viewer-selection .remove-article-viewer {
+	background-size: 0.5rem;
+}
+
+.article-viewer-badge {
+	--bs-badge-font-size: 0.875rem;
+}
+
+.article-viewer-avatar {
+	width: 20px;
+	height: 20px;
+	object-fit: cover;
+}
+
+.article-viewer-suggestions .article-viewer-avatar {
+	width: 24px;
+	height: 24px;
+}
+
+/* TinyMCE inserts menus and dialogs outside the article form. */
+body .tox.tox-tinymce .tox-edit-area::before {
+	border-color: #292929;
+}
+
+body .tox .tox-tbtn:is(:focus, :active, .tox-tbtn--active, .tox-tbtn--enabled, .tox-tbtn--enabled:hover),
+body .tox .tox-mbtn:is(:focus:not(:disabled), :active, .tox-mbtn--active, .tox-mbtn--active:focus:not(:disabled)),
+body .tox .tox-collection .tox-collection__item:is(.tox-collection__item--active, .tox-collection__item--enabled):not(.tox-collection__item--state-disabled) {
+	background-color: #e6e6e6;
+	color: #292929;
+}
+
+body .tox :is(.tox-tbtn, .tox-tbtn--enabled, .tox-split-button, .tox-number-input):focus::after,
+body .tox .tox-mbtn:focus:not(:disabled)::after,
+body .tox .tox-number-input :is(.tox-input-wrapper:focus, .tox-input-wrapper:has(input:focus), button:focus)::after,
+body .tox .tox-collection--toolbar .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+	box-shadow: 0 0 0 2px #292929;
+}
+
+body .tox .tox-collection--grid .tox-collection__item--active:not(.tox-collection__item--state-disabled):focus::after {
+	box-shadow: inset 0 0 0 2px #292929;
+}
+
+body .tox :is(.tox-textfield, .tox-toolbar-textfield, .tox-textarea, .tox-focusable-wrapper, .tox-listboxfield .tox-listbox--select, .tox-selectfield select):focus,
+body .tox :is(.tox-textarea-wrap, .tox-custom-editor):focus-within,
+body .tox .tox-navobj-bordered-focus.tox-navobj-bordered::before {
+	border-color: #292929;
+	box-shadow: 0 0 0 1px #292929;
+}
+
+body .tox input.tox-checkbox__input:focus + .tox-checkbox__icons {
+	box-shadow: inset 0 0 0 1px #292929;
+}
+
+body .tox .tox-dialog__body-nav-item:focus {
+	background-color: #e6e6e6;
+}
+
+body .tox .tox-dialog__body-nav-item--active {
+	border-color: #292929;
+	color: #292929;
+}
+
+body .tox .tox-button:not(.tox-button--secondary, .tox-button--naked, :disabled, [aria-disabled="true"]) {
+	background-color: #292929;
+	border-color: #292929;
+	color: #fff;
+}
+
+body .tox .tox-button:focus-visible {
+	outline: 2px solid #292929;
+	outline-offset: 2px;
 }
 
 .opt-file-preview {
@@ -308,12 +412,28 @@ tbody {
 	.opt-content {
 		margin-bottom: 10px;
 	}
+	.article-form .opt-wrapper:has(> .opt-label) {
+		margin-top: 0;
+		padding-block: 20px 44px;
+		border-bottom: 1px solid #dee2e6;
+	}
+	.article-form .opt-label {
+		height: auto;
+		margin-bottom: 10px;
+		font-weight: 700;
+	}
+	.article-form .opt-content {
+		margin-bottom: 0;
+	}
 	.opt-slt {
 		width: 100%;
 		margin-right: 0px;
 	}
 	.opt-txt {
 		width: 100%;
+	}
+	.opt-slt + .opt-txt {
+		margin-top: 8px;
 	}
 	.opt-file-preview {
 		width: 100%;

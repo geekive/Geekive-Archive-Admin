@@ -11,6 +11,9 @@
 			<div id="category-tree-wrapper" class="category-tree-wrapper col d-flex justify-content-center"></div>
 			<script>
 				$(function(){
+					if (navigator.userAgentData?.mobile || window.matchMedia('(hover: none) and (pointer: coarse)').matches) {
+						return;
+					}
 					openBallon({
 						id 			: 'category-tree-wrapper'
 						, direction : 'right'

@@ -172,7 +172,9 @@
 			ON
 				F.FILE_UID = A.THUMBNAIL_UID
 		WHERE
-			ARTICLE_UID = #{articleUid}
+			A.ARTICLE_UID = #{articleUid}
+			AND A.USER_UID = #{userUid}
+			AND A.FLAG_DELETED = 'N'
 	</select>
 	
 	<select id="selectArticleForEdit" parameterType="GeekiveMap" resultType="GeekiveMap">
@@ -194,44 +196,37 @@
 		    ARTICLE
 		WHERE
 			ARTICLE_UID = #{articleUid}
+			AND USER_UID = #{userUid}
+			AND FLAG_DELETED = 'N'
 	</select>
 	
 	<insert id="upsertArticle" parameterType="GeekiveMap">
 		/* contentMapper.upsertArticle */
-		INSERT INTO ARTICLE (
-			ARTICLE_UID
-			, CATEGORY_UID
-			, THUMBNAIL_UID
-			, USER_UID
-			, TITLE
-			, CONTENT
-			, REGISTRATION_DATE
-			, REGISTRATION_USER
-			, FLAG_ACTIVATED
-			, FLAG_PRIVATE
-		) VALUES (
-			#{articleUid}
-			, #{categoryUid}
-			, #{thumbnailUid}
-		    , #{userUid}
-			, #{title}
-			, #{content}
-			, NOW()
-		    , #{userUid}
-			, #{flagActivated}
-			, COALESCE(#{flagPrivate}, 'N')
-		)
-		ON DUPLICATE KEY UPDATE
-			CATEGORY_UID 		= #{categoryUid}
-			<if test="thumbnailUid != null and thumbnailUid != ''">
-				, THUMBNAIL_UID = #{thumbnailUid}
-			</if>
-			, TITLE 			= #{title}
-			, CONTENT			= #{content}
-			, UPDATE_DATE		= NOW()
-			, UPDATE_USER		= #{userUid}
-			, FLAG_ACTIVATED	= #{flagActivated}
-			, FLAG_PRIVATE		= COALESCE(#{flagPrivate}, FLAG_PRIVATE)
+		<choose>
+			<when test="newArticle">
+				INSERT INTO ARTICLE (
+					ARTICLE_UID, CATEGORY_UID, THUMBNAIL_UID, USER_UID, TITLE, CONTENT,
+					REGISTRATION_DATE, REGISTRATION_USER, FLAG_ACTIVATED, FLAG_PRIVATE
+				) VALUES (
+					#{articleUid}, #{categoryUid}, #{thumbnailUid}, #{userUid}, #{title}, #{content},
+					NOW(), #{userUid}, #{flagActivated}, COALESCE(#{flagPrivate}, 'N')
+				)
+			</when>
+			<otherwise>
+				UPDATE ARTICLE
+				SET CATEGORY_UID = #{categoryUid},
+					<if test="thumbnailUid != null and thumbnailUid != ''">
+						THUMBNAIL_UID = #{thumbnailUid},
+					</if>
+					TITLE = #{title},
+					CONTENT = #{content},
+					UPDATE_DATE = NOW(),
+					UPDATE_USER = #{userUid},
+					FLAG_ACTIVATED = #{flagActivated},
+					FLAG_PRIVATE = COALESCE(#{flagPrivate}, FLAG_PRIVATE)
+				WHERE ARTICLE_UID = #{articleUid} AND USER_UID = #{userUid} AND FLAG_DELETED = 'N'
+			</otherwise>
+		</choose>
 	</insert>
 	
 	<update id="deleteArticle" parameterType="GeekiveMap">
@@ -240,7 +235,8 @@
 		SET
 			FLAG_DELETED = 'Y'
 		WHERE
-			ARTICLE_UID = #{articleUid};
+			ARTICLE_UID = #{articleUid}
+			AND USER_UID = #{userUid}
 	</update>
 
 	<select id="selectCategory" parameterType="GeekiveMap" resultType="GeekiveMap">

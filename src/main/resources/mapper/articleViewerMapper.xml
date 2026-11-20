@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.geekive.geekiveArchiveAdmin.mapper.ArticleViewerMapper">
+	<select id="searchUsers" resultType="map">
+		SELECT U.USER_UID AS userUid, U.ARCHIVE_NAME AS archiveName, F.URL_PATH AS profileImageUrlPath
+		FROM `USER` U
+		LEFT JOIN `FILE` F ON F.FILE_UID = U.PROFILE_IMAGE_UID
+		WHERE U.FLAG_DELETED = 'N'
+		  AND U.USER_UID != #{userUid}
+		  AND LOCATE(#{query}, U.ARCHIVE_NAME) > 0
+		ORDER BY U.ARCHIVE_NAME, U.USER_UID
+		LIMIT 20
+	</select>
+
+	<select id="selectViewers" resultType="map">
+		SELECT U.USER_UID AS userUid, U.ARCHIVE_NAME AS archiveName, F.URL_PATH AS profileImageUrlPath
+		FROM ARTICLE_VIEWER V
+		JOIN `USER` U ON U.USER_UID = V.USER_UID AND U.FLAG_DELETED = 'N'
+		LEFT JOIN `FILE` F ON F.FILE_UID = U.PROFILE_IMAGE_UID
+		WHERE V.ARTICLE_UID = #{articleUid}
+		ORDER BY U.ARCHIVE_NAME, U.USER_UID
+	</select>
+
+	<select id="lockOwnedArticle" resultType="string">
+		SELECT ARTICLE_UID
+		FROM ARTICLE
+		WHERE ARTICLE_UID = #{articleUid}
+		  AND USER_UID = #{userUid}
+		  AND FLAG_DELETED = 'N'
+		FOR UPDATE
+	</select>
+
+	<delete id="deleteViewers">
+		DELETE FROM ARTICLE_VIEWER WHERE ARTICLE_UID = #{articleUid}
+	</delete>
+
+	<insert id="insertViewers">
+		INSERT INTO ARTICLE_VIEWER (ARTICLE_UID, USER_UID)
+		SELECT #{articleUid}, USER_UID
+		FROM `USER`
+		WHERE FLAG_DELETED = 'N' AND USER_UID != #{userUid}
+		  AND USER_UID IN
+		<foreach collection="viewerUids" item="viewerUid" open="(" separator="," close=")">
+			#{viewerUid}
+		</foreach>
+	</insert>
+</mapper>

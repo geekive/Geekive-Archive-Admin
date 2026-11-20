@@ -53,7 +53,9 @@
 		
 		let $userName 						= $('input[name="userName"]');
 		let $archiveName 					= $('input[name="archiveName"]');
-		let $flagArchiveNameChanged 		= $('input[name="flagArchiveNameChanged"]');
+		const initialArchiveName = $archiveName[0].defaultValue.trim();
+		let archiveNameEdited = false;
+		let $currentPassword 				= $('input[name="currentPassword"]');
 		let $password 						= $('input[name="password"]');
 		let $passwordCheck 					= $('#passwordCheck');
 		let $btnSave 						= $('#btn-save')
@@ -62,7 +64,11 @@
 			$(this).val($(this).val().replace(/[^^\p{L}\s]/gu, '').replace(/\s{2,}/g, ' '));
 		})
 		
-		$archiveName.on('input', function(){
+		$archiveName.attr('autocomplete', 'off').on('beforeinput', function(event) {
+			if (event.originalEvent && event.originalEvent.cancelable) {
+				archiveNameEdited = true;
+			}
+		}).on('input', function(){
 			$(this).val($(this).val().replace(/[^a-zA-Z0-9]/g, '').toLowerCase());
 		})
 		
@@ -98,84 +104,87 @@
 	        	return
 	        }
 	        
-	        let archiveName = $.trim($archiveName.val());
-	        if(isEmpty(archiveName)){
-	        	openModal({
-                    type		: 'alert'
-                    , title		: 'Profile'
-                    , message	: 'Fill in archive name.'
-                    , close		: function(){
-                    	$archiveName.focus();
-                    }
-                });
-	        	return
-	        }
+			const archiveName = archiveNameEdited ? $archiveName.val().trim() : initialArchiveName;
+			const archiveNameChanged = archiveName !== initialArchiveName;
+			$archiveName.val(archiveName);
+			if (archiveNameChanged) {
+				if (isEmpty(archiveName)) {
+					openModal({
+						type: 'alert', title: 'Profile', message: 'Fill in archive name.',
+						close: () => $archiveName.focus()
+					});
+					return;
+				}
+
+				const request = {
+					type: 'post',
+					contentType: 'application/json',
+					data: JSON.stringify({archiveName: archiveName})
+				};
+				const checkResponse = await $.ajax({
+					...request,
+					url: getFullPath('/user/check-archive-name-existence')
+				});
+				if (checkResponse.resultCode == 0) {
+					openModal({
+						type: 'alert', title: 'Profile', message: checkResponse.resultMessage,
+						close: () => $archiveName.focus()
+					});
+					return;
+				}
+				const availability = await $.ajax({
+					...request,
+					url: getFullPath('/user/check-archive-name-update-available')
+				});
+				if (availability.resultCode == 0) {
+					openModal({
+						type: 'alert', title: 'Profile', message: availability.resultMessage,
+						close: () => $archiveName.val(initialArchiveName).focus()
+					});
+					return;
+				}
+			}
 	        
-	        let checkResponse = await $.ajax({
-				type			: 'post'
-				, url			: getFullPath('/user/check-archive-name-existence')
-				, contentType	: 'application/json'
-				, data			: JSON.stringify({archiveName : archiveName})
-	        })
-	        if(checkResponse.resultCode == 0){
-	        	openModal({
-        			type: 'alert'
-        			, title: 'Profile'
-        			, message : checkResponse.resultMessage
-        			, close : function(){
-        				$archiveName.focus();
-        			}
-	        	});
-	    		return
-	    	}
-	        let initialArchiveName = '<c:out value="${userMap.archiveName}"/>';
-	        if(initialArchiveName != archiveName){
-	        	let archiveNameResponse = await $.ajax({
-					type			: 'post'
-					, url			: getFullPath('/user/check-archive-name-update-available')
-					, contentType	: 'application/json'
-					, data			: JSON.stringify({archiveName : archiveName})
-		        })
-		        if(archiveNameResponse.resultCode == 0){
-		        	openModal({
-	        			type: 'alert'
-	        			, title: 'Profile'
-	        			, message : archiveNameResponse.resultMessage
-	        			, close : function(){
-	        				$archiveName.val(initialArchiveName).focus();
-	        				$flagArchiveNameChanged.val('');
-	        			}
-		        	});
-		    		return
-		    	}
-	        	$flagArchiveNameChanged.val('Y');
-	        }else{
-	        	$flagArchiveNameChanged.val('');
-	        }
-	        
-	        let password 		= $password.val();
-	        let passwordCheck 	= $passwordCheck.val();
-	        if(isNotEmpty(password) || isNotEmpty(passwordCheck)){
-	        	if(password != passwordCheck){
-	        		openModal({
-	                    type		: 'alert'
-	                    , title		: 'Profile'
-	                    , message	: 'Password do not match.'
-	                    , close		: function(){
-	                    	$password.focus();
-	                    }
-	                });
-	        	}
-	        	return
-	        }
+			let password = $password.val();
+			let passwordCheck = $passwordCheck.val();
+			if (isNotEmpty(password) || isNotEmpty(passwordCheck)) {
+				if (isEmpty($currentPassword.val())) {
+					openModal({
+						type: 'alert', title: 'Profile', message: 'Enter your current password.',
+						close: () => $currentPassword.focus()
+					});
+					return;
+				}
+				if (password !== passwordCheck) {
+					openModal({
+						type: 'alert', title: 'Profile', message: 'Passwords do not match.',
+						close: () => $password.focus()
+					});
+					return;
+				}
+				if (password.length < 10 || password.length > 72 || !isPasswordFormat(password)) {
+					openModal({
+						type: 'alert', title: 'Profile', message: 'Use 10–72 characters, including a letter, a number, and a special character.',
+						close: () => $password.focus()
+					});
+					return;
+				}
+			}
 	        
 	        async function fnUpdate(){
+				let formData;
+				$archiveName.prop('disabled', !archiveNameChanged);
+				try {
+					formData = $('#form').getFormData();
+				} finally {
+					$archiveName.prop('disabled', false);
+				}
 	        	let updateResponse = await $.ajax({
 		            type			: 'post'
 		            , url			: getFullPath('/user/save-profile')
 		            , contentType 	: false
 					, processData 	: false
-		            , data			: $('#form').getFormData()
+		            , data			: formData
 		        });
 		        let modalParam = {
 	                type 		: 'alert'
@@ -190,7 +199,7 @@
 		        openModal(modalParam);
 	        }
 	        
-	        if(isNotEmpty($flagArchiveNameChanged.val())){
+			if (archiveNameChanged) {
 	    		openModal({
 					type 		: 'confirm'
 					, title		: 'Profile'
@@ -234,10 +243,8 @@
 		})
 	})
 </script>
-	<form id="form">
+	<form id="form" class="profile-form">
 		
-		<input type="hidden" name="flagArchiveNameChanged">
-	
 		<div class="profile-picture-wrapper d-flex align-items-center justify-content-center">
 			<img class="rounded-circle" src="${userMap.profileImageUrlPath}" onerror="getErrorImageUrl(this, 'profile')" width="200">
 			<input type="hidden" name="profileImage">
@@ -267,13 +274,21 @@
 			</c:import>
 			
 			<c:import url="/option/password">
-				<c:param name="label">Password</c:param>
+				<c:param name="label">Current password</c:param>
+				<c:param name="name">currentPassword</c:param>
+			</c:import>
+
+			<c:import url="/option/password">
+				<c:param name="label">New password</c:param>
 				<c:param name="name">password</c:param>
+				<c:param name="maxlength">72</c:param>
 			</c:import>
 			
 			<c:import url="/option/password">
 				<c:param name="label">Confirm</c:param>
 				<c:param name="id">passwordCheck</c:param>
+				<c:param name="name">passwordCheck</c:param>
+				<c:param name="maxlength">72</c:param>
 				<c:param name="placeholder">Confirm password</c:param>
 			</c:import>
 		</div>

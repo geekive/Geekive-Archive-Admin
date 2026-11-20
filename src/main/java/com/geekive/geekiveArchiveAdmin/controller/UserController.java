@@ -60,7 +60,7 @@ public class UserController {
 	@PostMapping(value = "/check-archive-name-update-available")
 	public GeekiveMap checkArchiveNameUpdateAvailable(@RequestBody GeekiveMap gMap) throws Exception{
 		try {
-			if(!userService.checkArchiveNameUpaateAvailable(gMap)) {
+			if(!userService.checkArchiveNameUpaateAvailable(new GeekiveMap())) {
 				throw new Exception("Archive name cannot be updated for 1 week since the last update.");
 			}
 		} catch (Exception e) {
@@ -73,7 +73,8 @@ public class UserController {
 	@ResponseBody
 	@PostMapping(value = "/save-profile", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
 	public GeekiveMap saveProfile(@RequestPart(value = "profileImage", required = false) MultipartFile thumbnail, @RequestPart("data") GeekiveMap gMap) throws Exception{
-		
+		GeekiveMap response = new GeekiveMap();
+		gMap.put("userUid", response.getString("userUid"));
 		String url = Util.getFileServerUploadUrl() + "/file";
 		
 		try {
@@ -84,12 +85,15 @@ public class UserController {
 			}
 			
 			userService.updateUser(gMap);
-			gMap.setResultMessage("Your request is complete.");
+			response.setResultMessage("Your request is complete.");
+		} catch (IllegalArgumentException e) {
+			response.setResultCode(0);
+			response.setResultMessage(e.getMessage());
 		} catch (Exception e) {
-			gMap.setResultCode(0);
-			gMap.setResultMessage(e.getMessage());
+			response.setResultCode(0);
+			response.setResultMessage("Could not save your profile. Please try again.");
 		}
-		return gMap;
+		return response;
 	}
 	
 	@ResponseBody
