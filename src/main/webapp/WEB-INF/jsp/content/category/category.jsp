@@ -17,52 +17,52 @@
 					openBallon({
 						id 			: 'category-tree-wrapper'
 						, direction : 'right'
-						, message	: 'you can change order by dragging category.'
+						, message	: '<spring:message code="settings.dragCategory" javaScriptEscape="true"/>'
 					})
 				})
 			</script>
 			<div class="menu-option-wrapper col-xl-8">
 				
 				<c:import url="/option/radio">
-					<c:param name="label">depth</c:param>
+					<c:param name="label"><spring:message code="settings.depth"/></c:param>
 					<c:param name="name">depth</c:param>
 					<c:param name="codeType">CATEGORY_DEPTH</c:param>
 				</c:import>
 			
 				<c:import url="/option/radio">
-					<c:param name="label">activated</c:param>
+					<c:param name="label"><spring:message code="state.activated"/></c:param>
 					<c:param name="name">flagActivated</c:param>
 					<c:param name="codeType">YES_NO</c:param>
 				</c:import>
 			
 	 			<c:import url="/option/text">
-					<c:param name="label">parent category</c:param>
+					<c:param name="label"><spring:message code="settings.parentCategory"/></c:param>
 					<c:param name="name">parentCategory</c:param>
-					<c:param name="placeholder">choose parent category in the left section.</c:param>
+					<c:param name="placeholder"><spring:message code="settings.chooseParentCategory"/></c:param>
 					<c:param name="readonly">true</c:param>
 					<c:param name="hide">true</c:param>
 				</c:import>
 				
 				<c:import url="/option/text">
-					<c:param name="label">category name</c:param>
+					<c:param name="label"><spring:message code="settings.categoryName"/></c:param>
 					<c:param name="name">categoryName</c:param>
 					<c:param name="maxlength">40</c:param>
 				</c:import>
 				
 				<c:import url="/option/text">
-					<c:param name="label">URL Path</c:param>
+					<c:param name="label"><spring:message code="settings.url"/></c:param>
 					<c:param name="name">urlPath</c:param>
-					<c:param name="placeholder">It's automatically filled when you add a category.</c:param>
+					<c:param name="placeholder"><spring:message code="settings.autoUrl"/></c:param>
 					<c:param name="maxlength">40</c:param>
 					<c:param name="hide">true</c:param>
 				</c:import>
 			
 				<div class="btn-wrapper row">
 					<div class="col-xxl-12 text-end">
-						<button type="button" id="btn-mode" class="btn btn-outline-dark">edit mode</button>
-						<button type="button" id="btn-save" class="btn btn-outline-dark">save</button>
-						<button type="button" id="btn-reset" class="btn btn-outline-dark">reset</button>
-						<button type="button" id="btn-delete" class="btn btn-outline-danger hide">delete</button>
+						<button type="button" id="btn-mode" class="btn btn-outline-dark"><spring:message code="settings.editMode"/></button>
+						<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
+						<button type="button" id="btn-reset" class="btn btn-outline-dark"><spring:message code="common.reset"/></button>
+						<button type="button" id="btn-delete" class="btn btn-outline-danger hide"><spring:message code="common.delete"/></button>
 					</div>
 				</div>
 			</div>
@@ -181,7 +181,7 @@
     			obj.$currentMode.val(targetMode);
     			
     			// modify mode button
-    			$('#btn-mode').attr('attr-current-mode', targetMode).html((targetMode == 'add' ? 'edit' : 'add') + ' mode');
+				$('#btn-mode').attr('attr-current-mode', targetMode).html(targetMode == 'add' ? '<spring:message code="settings.editMode" javaScriptEscape="true"/>' : '<spring:message code="settings.addMode" javaScriptEscape="true"/>');
 			}
 			
 			obj.$categoryName.on('input', function () {
@@ -205,8 +205,8 @@
     				if(isEmpty(obj.$parentCategoryUid.val())){
     					openModal({
     						type 		: 'alert'
-    						, title		: 'category'
-    						, message	: 'choose parent category.'
+							, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+							, message	: '<spring:message code="settings.parentCategoryRequired" javaScriptEscape="true"/>'
     					})
     					return
     				}
@@ -214,8 +214,8 @@
     			if(isEmpty(obj.$categoryName.val())){
 					openModal({
 						type 		: 'alert'
-						, title		: 'category'
-						, message	: 'fill in category\'s name.'
+						, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="settings.categoryRequired" javaScriptEscape="true"/>'
 						, close		: function(){
 							obj.$categoryName.focus();
 						}
@@ -226,8 +226,8 @@
         			if(isEmpty(obj.$urlPath.val().replace('/', ''))){
     					openModal({
     						type 		: 'alert'
-    						, title		: 'category'
-    						, message	: 'fill in url path.'
+							, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+							, message	: '<spring:message code="settings.urlRequired" javaScriptEscape="true"/>'
     						, close		: function(){
     							obj.$urlPath.focus();
     						}
@@ -247,8 +247,8 @@
 						if(data.resultCode == 1){
 							openModal({
 								type 		: 'alert'
-								, title		: 'category'
-								, message	: 'data has been successfully saved.'
+								, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+								, message	: '<spring:message code="common.saved" javaScriptEscape="true"/>'
 								, close		: function(){
 									location.reload();
 								}
@@ -256,7 +256,7 @@
 						}else if(data.resultCode == 0){
 							openModal({
 								type 		: 'alert'
-								, title		: 'category'
+								, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
 								, message	: data.resultMessage
 							})
 						}
@@ -290,17 +290,17 @@
 				if(depth == 1 && $category.siblings('.category-child').children('li').length > 0){
 					openModal({
 						type 		: 'alert'
-						, title		: 'category'
-						, message	: 'this category has sub category so it\'s impossible to delete it.'
+						, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="settings.categoryHasChildren" javaScriptEscape="true"/>'
 					})
 					return
 				}
 				
 				openModal({
 					type 		: 'confirm'
-					, title		: 'category'
-					, message	: 'are you sure to delete the category?'
-					, button	: 'delete'
+					, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="settings.confirmDeleteCategory" javaScriptEscape="true"/>'
+					, button	: '<spring:message code="common.delete" javaScriptEscape="true"/>'
 					, confirm	: function(){
 						$.ajax({
 							type			: 'post'
@@ -311,8 +311,8 @@
 								if(data.resultCode == 1){
 									openModal({
 										type 		: 'alert'
-										, title		: 'category'
-										, message	: 'data has been successfully deleted.'
+										, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+										, message	: '<spring:message code="common.deleted" javaScriptEscape="true"/>'
 										, close		: function(){
 											location.reload();
 										}
@@ -320,7 +320,7 @@
 								}else if(data.resultCode == 0){
 									openModal({
 										type 		: 'alert'
-										, title		: 'category'
+										, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
 										, message	: data.resultMessage
 									})
 								}

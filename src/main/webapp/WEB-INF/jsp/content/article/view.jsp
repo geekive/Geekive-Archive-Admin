@@ -11,22 +11,22 @@
 		<input type="hidden" name="articleUid" value="${articleMap.articleUid}">
 	
 		<div class="opt-wrapper row">
-			<div class="opt-label col-1 d-flex align-items-center justify-content-center">category</div>
+			<div class="opt-label col-1 d-flex align-items-center justify-content-center"><spring:message code="article.category"/></div>
 			<div class="opt-content col d-flex align-items-center">${articleMap.categoryName}</div>
 		</div>
 		
 		<div class="opt-wrapper row">
-			<div class="opt-label col-1 d-flex align-items-center justify-content-center">activation state</div>
-			<div class="opt-content col d-flex align-items-center">${articleMap.flagActivated}</div>
+			<div class="opt-label col-1 d-flex align-items-center justify-content-center"><spring:message code="article.activation"/></div>
+			<div class="opt-content col d-flex align-items-center"><spring:message code="state.${articleMap.flagActivated}" text="${articleMap.flagActivated}" htmlEscape="true"/></div>
 		</div>
 
 		<c:if test="${articleMap.flagPrivate eq 'Y'}">
 			<div class="opt-wrapper row">
-				<div class="opt-label col-1 d-flex align-items-center justify-content-center text-center">allowed viewers</div>
+				<div class="opt-label col-1 d-flex align-items-center justify-content-center text-center"><spring:message code="article.viewers"/></div>
 				<div class="opt-content col d-flex align-items-center">
 					<c:choose>
 						<c:when test="${empty articleViewers}">
-							<span>Only you</span>
+							<span><spring:message code="article.onlyYou"/></span>
 						</c:when>
 						<c:otherwise>
 							<ul class="list-unstyled d-flex flex-wrap gap-2 mb-0">
@@ -44,32 +44,32 @@
 		</c:if>
 		
 		<div class="opt-wrapper row">
-			<div class="opt-label col-1 d-flex align-items-center justify-content-center">thumbnail</div>
+			<div class="opt-label col-1 d-flex align-items-center justify-content-center"><spring:message code="article.thumbnail"/></div>
 			<div class="opt-content col d-flex align-items-center">
 				<img src="${articleMap.thumbnailUrlPath}" width="200px" border="1" onerror="getErrorImageUrl(this, 'thumbnail')">
 			</div>
 		</div>
 
 		<div class="opt-wrapper row">
-			<div class="opt-label col-1 d-flex align-items-center justify-content-center">title</div>
+			<div class="opt-label col-1 d-flex align-items-center justify-content-center"><spring:message code="option.code.SO-01"/></div>
 			<div class="opt-content col d-flex align-items-center gap-2">
 				<c:if test="${articleMap.flagPrivate eq 'Y'}">
-					<span class="badge text-bg-dark flex-shrink-0">Private</span>
+					<span class="badge text-bg-dark flex-shrink-0"><spring:message code="article.private"/></span>
 				</c:if>
 				<span><c:out value="${articleMap.title}"/></span>
 			</div>
 		</div>
 
 		<div class="opt-wrapper row">
-			<div class="opt-label col-1 d-flex align-items-center justify-content-center">content</div>
+			<div class="opt-label col-1 d-flex align-items-center justify-content-center"><spring:message code="article.content"/></div>
 			<div class="col"><c:out value="${articleMap.content}" escapeXml="false"/></div>
 		</div>
 
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-edit" class="btn btn-outline-dark">edit</button>
-				<button type="button" id="btn-back" class="btn btn-outline-dark">back</button>
-				<button type="button" id="btn-delete" class="btn btn-outline-danger">delete</button>
+				<button type="button" id="btn-edit" class="btn btn-outline-dark"><spring:message code="common.edit"/></button>
+				<button type="button" id="btn-back" class="btn btn-outline-dark"><spring:message code="common.back"/></button>
+				<button type="button" id="btn-delete" class="btn btn-outline-danger"><spring:message code="common.delete"/></button>
 			</div>
 		</div>
 	</form>
@@ -88,9 +88,9 @@
 			$('#btn-delete').on('click', function(){
 				openModal({
 					type 		: 'confirm'
-					, title		: 'menu'
-					, message	: 'are you sure to delete this article?'
-					, button	: 'delete'
+					, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="article.confirmDelete" javaScriptEscape="true"/>'
+					, button	: '<spring:message code="common.delete" javaScriptEscape="true"/>'
 					, confirm	: function(){
 						$.ajax({
 							type		: 'post',
@@ -101,8 +101,8 @@
 								if(data.resultCode == 1){
 									openModal({
 										type 		: 'alert'
-										, title		: 'menu'
-										, message	: 'the article has been successfully deleted.'
+										, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+										, message	: '<spring:message code="article.deleted" javaScriptEscape="true"/>'
 										, close		: function(){
 											goToPage('/content/article/list');
 										}
@@ -110,7 +110,7 @@
 								}else if(data.resultCode == 0){
 									openModal({
 										type 		: 'alert'
-										, title		: 'menu'
+										, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
 										, message	: data.resultMessage
 									})
 								}

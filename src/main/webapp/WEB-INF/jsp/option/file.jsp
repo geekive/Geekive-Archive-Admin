@@ -6,9 +6,9 @@
 	<div class="opt-content col d-flex align-items-center">
 		<input type="hidden">
 		<input class="hide" type="file" id="${id}" name="${name}" accept="${accept}">
-		<input type="text" class="${preview eq true ? 'opt-file-preview' : 'opt-txt'} form-control" readonly="readonly" placeholder="click for choosing file.">
+		<input type="text" class="${preview eq true ? 'opt-file-preview' : 'opt-txt'} form-control" readonly="readonly" placeholder="<spring:message code='common.selectFile' htmlEscape='true'/>">
 		<c:if test="${preview}">
-			<span class="file-img-preview">preview</span>
+			<span class="file-img-preview"><spring:message code="common.preview"/></span>
 		</c:if>
 	</div>
 </div>
@@ -29,9 +29,9 @@
 			
 			let type = this.files[0].type;
 			if(type.includes('image')){
-				alert('yes');
+				alert('<spring:message code="option.code.YN-01" javaScriptEscape="true"/>');
 			}else{
-				alert('no');
+				alert('<spring:message code="option.code.YN-02" javaScriptEscape="true"/>');
 			}
 			<c:if test="${crop}">
 				pixelarity.open(this.files[0], true, function(res){

@@ -19,8 +19,8 @@
 </a>
 
 <ul class="dropdown-menu">
-  <li><a class="dropdown-item" href="#">English</a></li>
-  <li><a class="dropdown-item" href="#">Korean</a></li>
+  <li><a class="dropdown-item" href="#"><spring:message code="common.english"/></a></li>
+  <li><a class="dropdown-item" href="#"><spring:message code="common.korean"/></a></li>
 </ul>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

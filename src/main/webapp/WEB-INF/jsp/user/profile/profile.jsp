@@ -23,8 +23,8 @@
 					fnReset();
 					openModal({
 						type 		: 'alert'
-						, title		: 'article'
-						, message	: 'only image file is allowed.'
+						, title		: '<spring:message code="article.label" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="common.imageOnly" javaScriptEscape="true"/>'
 					})
 					return
 				}
@@ -34,8 +34,8 @@
 						if(isEmpty(res)){
 							openModal({
 								type 		: 'alert'
-								, title		: 'preview'
-								, message	: 'Failed to load preview image.'
+								, title		: '<spring:message code="common.preview" javaScriptEscape="true"/>'
+								, message	: '<spring:message code="common.previewFailed" javaScriptEscape="true"/>'
 							})
 							return
 						}
@@ -95,8 +95,8 @@
 	        if(isEmpty($userName.val())){
 	        	openModal({
                     type		: 'alert'
-                    , title		: 'profile'
-                    , message	: 'Fill in user name.'
+                    , title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+                    , message	: '<spring:message code="profile.nameRequired" javaScriptEscape="true"/>'
                     , close		: function(){
                     	$userName.focus();
                     }
@@ -110,7 +110,7 @@
 			if (archiveNameChanged) {
 				if (isEmpty(archiveName)) {
 					openModal({
-						type: 'alert', title: 'Profile', message: 'Fill in archive name.',
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: '<spring:message code="profile.archiveRequired" javaScriptEscape="true"/>',
 						close: () => $archiveName.focus()
 					});
 					return;
@@ -127,7 +127,7 @@
 				});
 				if (checkResponse.resultCode == 0) {
 					openModal({
-						type: 'alert', title: 'Profile', message: checkResponse.resultMessage,
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: checkResponse.resultMessage,
 						close: () => $archiveName.focus()
 					});
 					return;
@@ -138,7 +138,7 @@
 				});
 				if (availability.resultCode == 0) {
 					openModal({
-						type: 'alert', title: 'Profile', message: availability.resultMessage,
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: availability.resultMessage,
 						close: () => $archiveName.val(initialArchiveName).focus()
 					});
 					return;
@@ -150,21 +150,21 @@
 			if (isNotEmpty(password) || isNotEmpty(passwordCheck)) {
 				if (isEmpty($currentPassword.val())) {
 					openModal({
-						type: 'alert', title: 'Profile', message: 'Enter your current password.',
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: '<spring:message code="profile.currentPasswordRequired" javaScriptEscape="true"/>',
 						close: () => $currentPassword.focus()
 					});
 					return;
 				}
 				if (password !== passwordCheck) {
 					openModal({
-						type: 'alert', title: 'Profile', message: 'Passwords do not match.',
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: '<spring:message code="profile.passwordMismatch" javaScriptEscape="true"/>',
 						close: () => $password.focus()
 					});
 					return;
 				}
 				if (password.length < 10 || password.length > 72 || !isPasswordFormat(password)) {
 					openModal({
-						type: 'alert', title: 'Profile', message: 'Use 10–72 characters, including a letter, a number, and a special character.',
+						type: 'alert', title: '<spring:message code="profile.label" javaScriptEscape="true"/>', message: '<spring:message code="profile.passwordFormat" javaScriptEscape="true"/>',
 						close: () => $password.focus()
 					});
 					return;
@@ -188,7 +188,7 @@
 		        });
 		        let modalParam = {
 	                type 		: 'alert'
-	                , title 	: 'Profile'
+	                , title 	: '<spring:message code="profile.label" javaScriptEscape="true"/>'
 	                , message 	: updateResponse.resultMessage
 	                , close 	: () => {
 	                	if(updateResponse.resultCode == 1){
@@ -202,9 +202,9 @@
 			if (archiveNameChanged) {
 	    		openModal({
 					type 		: 'confirm'
-					, title		: 'Profile'
-					, message	: 'You seem to have changed the archive name. Once the archive name changes, you cannot change it for 1 week. Are you sure to save?'
-					, button	: 'Save'
+					, title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="profile.confirmArchiveChange" javaScriptEscape="true"/>'
+					, button	: '<spring:message code="common.save" javaScriptEscape="true"/>'
 					, confirm	: function(){
 						fnUpdate();
 					}
@@ -218,9 +218,9 @@
 		$btnDelete.on('click', function(){
 			openModal({
 				type 		: 'confirm'
-				, title		: 'Profile'
-				, message	: '[Account Deletion Notice] <br/><br/> Before proceeding with account deletion, please note the following: <br/><br/> 1. Account Removal: Your account information and profile will be deleted. <br/><br/> 2. Posts: Your posts will be deleted, but comments will remain. <br/><br/> 3. Irreversible Action: Once deleted, your account cannot be restored, and you will not be able to sign up again using the same email.'
-				, button	: 'Delete'
+				, title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+				, message	: '<spring:message code="profile.deleteNotice" javaScriptEscape="true"/>'
+				, button	: '<spring:message code="common.delete" javaScriptEscape="true"/>'
 				, confirm	: async function(){
 					let deleteResponse = await $.ajax({
 						type			: 'post'
@@ -229,7 +229,7 @@
 			        })
 			        let modalParam = {
 		                type 		: 'alert'
-		                , title 	: 'Profile'
+		                , title 	: '<spring:message code="profile.label" javaScriptEscape="true"/>'
 		                , message 	: deleteResponse.resultMessage
 		                , close 	: () => {
 		                	if(deleteResponse.resultCode == 1){
@@ -253,50 +253,50 @@
 
 		<div class="profile-opt-wrapper">
 			<c:import url="/option/text">
-				<c:param name="label">Email</c:param>
+				<c:param name="label"><spring:message code="profile.email"/></c:param>
 				<c:param name="maxlength">100</c:param>
 				<c:param name="readonly">true</c:param>
 				<c:param name="data">${userMap.email}</c:param>
 			</c:import>
 			
 			<c:import url="/option/text">
-				<c:param name="label">Name</c:param>
+				<c:param name="label"><spring:message code="profile.name"/></c:param>
 				<c:param name="name">userName</c:param>
 				<c:param name="maxlength">20</c:param>
 				<c:param name="data">${userMap.userName}</c:param>
 			</c:import>
 			
 			<c:import url="/option/text">
-				<c:param name="label">Archive</c:param>
+				<c:param name="label"><spring:message code="profile.archive"/></c:param>
 				<c:param name="name">archiveName</c:param>
 				<c:param name="maxlength">10</c:param>
 				<c:param name="data">${userMap.archiveName}</c:param>
 			</c:import>
 			
 			<c:import url="/option/password">
-				<c:param name="label">Current password</c:param>
+				<c:param name="label"><spring:message code="profile.currentPassword"/></c:param>
 				<c:param name="name">currentPassword</c:param>
 			</c:import>
 
 			<c:import url="/option/password">
-				<c:param name="label">New password</c:param>
+				<c:param name="label"><spring:message code="profile.newPassword"/></c:param>
 				<c:param name="name">password</c:param>
 				<c:param name="maxlength">72</c:param>
 			</c:import>
 			
 			<c:import url="/option/password">
-				<c:param name="label">Confirm</c:param>
+				<c:param name="label"><spring:message code="common.confirm"/></c:param>
 				<c:param name="id">passwordCheck</c:param>
 				<c:param name="name">passwordCheck</c:param>
 				<c:param name="maxlength">72</c:param>
-				<c:param name="placeholder">Confirm password</c:param>
+				<c:param name="placeholder"><spring:message code="profile.confirmPassword"/></c:param>
 			</c:import>
 		</div>
 		
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-save" class="btn btn-outline-dark">Save</button>
-				<button type="button" id="btn-delete" class="btn btn-outline-danger">Delete account</button>
+				<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
+				<button type="button" id="btn-delete" class="btn btn-outline-danger"><spring:message code="profile.deleteAccount"/></button>
 			</div>
 		</div>
 	</form>

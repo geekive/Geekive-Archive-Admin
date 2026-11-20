@@ -14,7 +14,7 @@
 		
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-save" class="btn btn-outline-dark">save</button>
+				<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
 			</div>
 		</div>
 	</form>
@@ -36,8 +36,8 @@
 		            if (/[ㄱ-ㅎ가-힣]/.test(url)) {
 		                openModal({
 		                    type: 'alert',
-		                    title: 'social media',
-		                    message: 'korean is not allowed for url.'
+		                    title: '<spring:message code="social.label" javaScriptEscape="true"/>',
+		                    message: '<spring:message code="social.koreanUrl" javaScriptEscape="true"/>'
 		                });
 		                
 		                $(this).focus();
@@ -49,8 +49,8 @@
 		            if (!urlPattern.test(url)) {
 		                openModal({
 		                    type: 'alert',
-		                    title: 'social media',
-		                    message: 'put a valid url.'
+		                    title: '<spring:message code="social.label" javaScriptEscape="true"/>',
+		                    message: '<spring:message code="social.invalidUrl" javaScriptEscape="true"/>'
 		                });
 		                
 		                $(this).focus();
@@ -72,10 +72,10 @@
 		            contentType	: 'application/json',
 		            data		: JSON.stringify(socialMediaArray),
 		            success: function(data){
-		                const message = data.resultCode === 1 ? 'data has been successfully saved.' : data.resultMessage;
+		                const message = data.resultCode === 1 ? '<spring:message code="common.saved" javaScriptEscape="true"/>' : data.resultMessage;
 		                openModal({
 		                    type: 'alert',
-		                    title: 'social media',
+		                    title: '<spring:message code="social.label" javaScriptEscape="true"/>',
 		                    message: message,
 		                    close: data.resultCode === 1 ? function() { location.reload(); } : undefined
 		                });

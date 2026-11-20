@@ -4,13 +4,13 @@
 
 <div id="loading-wrapper" class="hide">
 	<div id="loading-spinner" class="spinner-border" role="status"></div>
-	<div id="loading-message">Loading...</div>
+	<div id="loading-message"><spring:message code="common.loading"/></div>
 </div>
 <script>
 	let openLoading = function(message){
 		let $loadingWrapper = $('#loading-wrapper');
 		$loadingWrapper.removeClass('hide');
-		$loadingWrapper.children('#loading-message').html(isNotEmpty(message) ? message : 'Loading...');
+		$loadingWrapper.children('#loading-message').html(isNotEmpty(message) ? message : '<spring:message code="common.loading" javaScriptEscape="true"/>');
 	}
 	
 	let closeLoading = function(){

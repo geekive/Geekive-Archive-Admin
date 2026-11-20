@@ -8,7 +8,7 @@
 			<c:forEach var="radio" items="${radioList}" varStatus="status">
 				<div class="opt-radio col-1">
 					<input class="form-check-input" type="radio" id="radio-${name}-${radio.radioKey}" key="${radio.radioKey}" name="${name}" value="${radio.radioValue}" ${(empty data ? status.first : (data eq radio.radioKey || data eq radio.radioValue)) ? 'checked' : ''}>
-					<label class="form-check-label" for="radio-${name}-${radio.radioKey}">${radio.radioLabel}</label>
+					<label class="form-check-label" for="radio-${name}-${radio.radioKey}"><spring:message code="option.code.${radio.radioKey}" text="${radio.radioLabel}" htmlEscape="true"/></label>
 				</div>
 			</c:forEach>
 		</div>

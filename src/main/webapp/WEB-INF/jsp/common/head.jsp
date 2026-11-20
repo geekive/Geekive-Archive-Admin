@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp"%>
 <!DOCTYPE html>
-<html>
+<html lang="${pageContext.response.locale.language eq 'ko' ? 'ko' : 'en'}">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,12 +9,12 @@
     <meta property="og:title" content="Geekive Archive">
     <meta property="og:type" content="website">
     <meta property="og:image" content="https://archive.geekive.com/storage/image/common/meta_logo.png">
-    <meta property="og:description" content="The simplest blog.">
+    <meta property="og:description" content="<spring:message code='common.description' htmlEscape='true'/>">
     
 	<link rel="icon" href="<c:url value="/image/favicon.ico"/>">
     <link rel="apple-touch-icon" href="<c:url value="/image/favicon.ico"/>">
 	
-	<title>${sessionScope.userMap.archiveLogo}</title>
+	<title><c:choose><c:when test="${empty adminArchiveLogo}"><spring:message code="common.indexTitle"/></c:when><c:otherwise>${adminArchiveLogo} <spring:message code="common.admin"/></c:otherwise></c:choose></title>
 	
 	<link rel="stylesheet" type="text/css" href="<c:url value="/css/jqueryui/jquery-ui.min.css"/>"/>
 	<link rel="stylesheet" type="text/css" href="<c:url value="/css/bootstrap/bootstrap.css"/>"/>

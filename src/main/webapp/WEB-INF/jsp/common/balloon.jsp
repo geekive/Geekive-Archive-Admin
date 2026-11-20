@@ -3,9 +3,9 @@
 <%@ include file="/WEB-INF/jsp/common/jstlcore.jsp"%>
 
 <div class="balloon-wrapper hide">
-	<button type="button" class="balloon-close-button btn-close" aria-label="Close"></button>
+	<button type="button" class="balloon-close-button btn-close" aria-label="<spring:message code='common.close' htmlEscape='true'/>"></button>
 	<div class="balloon-line"></div>
-	<p class="balloon-text">This is the content of the speech bubble.</p>
+	<p class="balloon-text"><spring:message code="common.notice"/></p>
 </div>
 <div class="balloon-redbox hide"></div>
 <script>

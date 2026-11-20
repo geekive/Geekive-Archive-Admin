@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.Constants;
 import com.geekive.geekiveArchiveAdmin.common.CryptoUtil;
 import com.geekive.geekiveArchiveAdmin.common.Util;
@@ -55,21 +56,21 @@ public class UserService implements UserMapper{
 		if (requestedArchiveName != null) {
 			GeekiveMap currentProfile = userMapper.selectUser(gMap);
 			if (currentProfile == null) {
-				throw new IllegalArgumentException("Profile not found.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.notFound"));
 			}
 			String currentArchiveName = currentProfile.getString("archiveName");
 			String archiveName = requestedArchiveName.trim();
 			changeArchiveName = !archiveName.equals(currentArchiveName == null ? "" : currentArchiveName.trim());
 			if (changeArchiveName) {
 				if (archiveName.isEmpty()) {
-					throw new IllegalArgumentException("Fill in archive name.");
+					throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveRequired"));
 				}
 				gMap.put("archiveName", archiveName);
 				if (Arrays.asList(Constants.BANNED_ARCHIVE_NAME).contains(archiveName) || checkArchiveNameExistence(gMap)) {
-					throw new IllegalArgumentException("The archive name has already been signed up. Please try another archive name.");
+					throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveTaken"));
 				}
 				if (!"Y".equals(currentProfile.getString("flagArchiveNameUpdateAvailable"))) {
-					throw new IllegalArgumentException("Archive name cannot be updated for 1 week since the last update.");
+					throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveCooldown"));
 				}
 				gMap.put("previousArchiveName", currentArchiveName);
 			} else {
@@ -83,20 +84,20 @@ public class UserService implements UserMapper{
 		boolean changePassword = Util.isNotEmpty(password) || Util.isNotEmpty(confirmation);
 		if (changePassword) {
 			if (Util.isEmpty(password) || !password.equals(confirmation)) {
-				throw new IllegalArgumentException("Passwords do not match.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.passwordMismatch"));
 			}
 			if (!password.matches("(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*(),.?:{}|<>_\\-])[A-Za-z0-9!@#$%^&*(),.?:{}|<>_\\-]{10,72}")) {
-				throw new IllegalArgumentException("Use 10–72 characters, including a letter, a number, and a special character.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.passwordFormat"));
 			}
 			if (Util.isEmpty(currentPassword)) {
-				throw new IllegalArgumentException("Enter your current password.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.currentPasswordRequired"));
 			}
 			GeekiveMap loginQuery = new GeekiveMap();
 			loginQuery.put("userUid", gMap.getString("userUid"));
 			GeekiveMap account = loginMapper.selectUser(loginQuery);
 			String currentPasswordHash = account == null ? null : account.getString("password");
 			if (Util.isEmpty(currentPasswordHash) || !cryptoUtil.checkPassword(currentPassword, currentPasswordHash)) {
-				throw new IllegalArgumentException("The current password is incorrect. Please try again.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.incorrectCurrentPassword"));
 			}
 			gMap.put("currentPasswordHash", currentPasswordHash);
 			gMap.put("password", cryptoUtil.encryptPassword(password));
@@ -112,10 +113,10 @@ public class UserService implements UserMapper{
 		}
 		int updated = userMapper.updateUser(gMap);
 		if (changeArchiveName && updated != 1) {
-			throw new IllegalArgumentException("Your profile has changed. Refresh the page and try again.");
+			throw new IllegalArgumentException(MessageUtil.getMessage("profile.changed"));
 		}
 		if (changePassword && updated != 1) {
-			throw new IllegalArgumentException("Your password has changed. Enter your current password and try again.");
+			throw new IllegalArgumentException(MessageUtil.getMessage("profile.passwordChanged"));
 		}
 		return updated;
 	}

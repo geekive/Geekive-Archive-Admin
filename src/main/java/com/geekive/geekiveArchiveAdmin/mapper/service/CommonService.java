@@ -24,8 +24,8 @@ public class CommonService implements CommonMapper{
 	}
 
 	@Override
-	public String selectSelectedMenuTitle(String path) {
-		return commonMapper.selectSelectedMenuTitle(path);
+	public String selectSelectedMenuTitle(String path, boolean korean) {
+		return commonMapper.selectSelectedMenuTitle(path, korean);
 	}
 
 	@Override

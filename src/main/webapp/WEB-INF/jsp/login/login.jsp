@@ -8,25 +8,25 @@
 				<div class="login-wrapper">
 					<div class="row">
 						<div class="login-ga col-12 text-center">
-							Geekive Archive Admin
+							<spring:message code="common.indexTitle"/>
 						</div>
 					</div>
 					<div class="mb-3 row">
-						<label for="email" class="col-xl-2 col-form-label">Email</label>
+						<label for="email" class="col-xl-2 col-form-label"><spring:message code="profile.email"/></label>
 						<div class="col-12 col-xl-10">
 							<input type="text" class="form-control" id="email" name="email" inputmode="email" autocomplete="username">
 						</div>
 					</div>
 					<div id="login-password-row" class="mb-3 row hide">
-						<label for="password" class="col-xl-2 col-form-label">Password</label>
+						<label for="password" class="col-xl-2 col-form-label"><spring:message code="profile.password"/></label>
 						<div class="col-12 col-xl-10">
 							<input type="password" class="form-control" id="password" name="password" autocomplete="current-password">
 						</div>
 					</div>
 					<div class="row">
 						<div class="col-sm-12 text-end">
-							<button type="button" id="btn-continue" class="btn btn btn-outline-dark">Continue</button>
-							<button type="button" id="btn-login" class="btn btn btn-outline-dark hide">Log in</button>
+							<button type="button" id="btn-continue" class="btn btn btn-outline-dark"><spring:message code="common.continue"/></button>
+							<button type="button" id="btn-login" class="btn btn btn-outline-dark hide"><spring:message code="common.login"/></button>
 						</div>
 					</div>
 				</div>
@@ -69,16 +69,16 @@
 				if(isEmpty(email)){
 					openModal({
 						type 		: 'alert'
-						, title		: 'login'
-						, message	: 'fill in your email.'
+						, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="login.emailRequired" javaScriptEscape="true"/>'
 						, close		: fnClose
 					})
 					return
 				}else if(!isEmailFormat(email)){
 					openModal({
 						type 		: 'alert'
-						, title		: 'login'
-						, message	: 'it is not the correct email format.'
+						, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="login.invalidEmail" javaScriptEscape="true"/>'
 						, close		: fnClose
 					})
 					return
@@ -98,7 +98,7 @@
 							}else if(data.resultCode == 0){
 								openModal({
 									type 		: 'alert'
-									, title		: 'login'
+									, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
 									, message	: data.resultMessage
 									, close		: fnClose
 								})
@@ -117,8 +117,8 @@
 				if(isEmpty(password)){
 					openModal({
 						type 		: 'alert'
-						, title		: 'login'
-						, message	: 'fill in password.'
+						, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="login.passwordRequired" javaScriptEscape="true"/>'
 						, close		: fnClose
 					})
 					return
@@ -134,7 +134,7 @@
 							}else if(data.resultCode == 0){
 								openModal({
 									type 		: 'alert'
-									, title		: 'login'
+									, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
 									, message	: data.resultMessage
 									, close		: fnClose
 								})

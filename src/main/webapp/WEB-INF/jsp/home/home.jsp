@@ -59,17 +59,20 @@
 
 .article-info  img{
 	max-height: 59.68px;
+	flex-shrink: 0;
 }
 
 .article-info .article-title{
-	width: 81%;
+	flex: 1;
+	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
 .article-info .article-view-count{
-	width: 19%;
+	flex-shrink: 0;
+	white-space: nowrap;
 }
 
 @media ( max-width : 1199px) {
@@ -87,13 +90,6 @@
 		margin-bottom: 20px;
 	}
 	
-	.article-info .article-title{
-		width: 90%;
-	}
-	
-	.article-info .article-view-count{
-		width: 10%;
-	}
 }
 
 @media ( max-height : 810px) {
@@ -118,7 +114,7 @@
 	
 		<!-- section :: Traffic Trend for My Archive -->
 	    <div class="section col-xl-6">
-	    	<div class="title d-flex align-items-center justify-content-center">Traffic Trend for My Archive</div>
+			<div class="title d-flex align-items-center justify-content-center"><spring:message code="home.traffic"/></div>
 	    	<div class="content">
 	     		<canvas id="section01"></canvas>
 	     	</div>
@@ -126,24 +122,24 @@
 	    
 	    <!-- section :: Top 5 Most Viewed Articles in the Last 30 Days -->
 	    <div class="section col-xl-6">
-	    	<div class="title d-flex align-items-center justify-content-center">Top 5 Most Viewed Articles in the Last 30 Days</div>
+			<div class="title d-flex align-items-center justify-content-center"><spring:message code="home.topArticles"/></div>
 			<div class="content">
 				<c:choose>
 					<c:when test="${!empty top5ArticleList}">
 						<c:forEach items="${top5ArticleList}" var="top5Article">
 							<div class="article-info d-flex align-items-center" onclick="goToPage('/content/article/view?articleUid=${top5Article.articleUid}')">
 								<img src="${top5Article.thumbnailUrlPath}" onerror="getErrorImageUrl(this, 'thumbnail')">
-								<div class="article-title p-2 flex-fil">
+								<div class="article-title p-2">
 									${top5Article.title}
 								</div>
-								<div class="article-view-count p-2 flex-fil">
-									${top5Article.viewCount} Views
+								<div class="article-view-count p-2">
+									${top5Article.viewCount} <spring:message code="home.views"/>
 								</div>
 							</div>
 						</c:forEach>				
 					</c:when>
 					<c:otherwise>
-						You don't have any article viewed in the last 30 days.
+						<spring:message code="home.noViews"/>
 					</c:otherwise>
 				</c:choose>
 
@@ -152,14 +148,14 @@
 	    
 	    <!-- section :: empty -->
 	    <div class="section col-xl-6">
-	    	<div class="title d-flex align-items-center justify-content-center">Empty Area</div>
+			<div class="title d-flex align-items-center justify-content-center"><spring:message code="home.empty"/></div>
 	    	<div class="content developing">
 	     	</div>
 	    </div>
 	    
 	    <!-- section :: empty -->
 	    <div class="section col-xl-6">
-	    	<div class="title d-flex align-items-center justify-content-center">Empty Area</div>
+			<div class="title d-flex align-items-center justify-content-center"><spring:message code="home.empty"/></div>
 	    	<div class="content developing">
 	     	</div>
 	    </div>
@@ -170,7 +166,7 @@
 	    		if(dot > 6) {
 		    		dot = 0;
 	    		}
-	    		let msg = 'Developing';
+				let msg = '<spring:message code="home.developing" javaScriptEscape="true"/>';
 	    		for(let i = 0; i < dot; i++) {
 	    			msg += '.';
 	    		}	
@@ -203,7 +199,7 @@
 			data : {
 				labels : monthArray,
 				datasets : [ {
-					label : 'Visitor',
+					label : '<spring:message code="home.visitors" javaScriptEscape="true"/>',
 					data : visitCountArray,
 					backgroundColor : '#292929',
 					maxBarThickness : 30

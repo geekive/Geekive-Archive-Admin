@@ -14,12 +14,12 @@
 		  	<div class="menu-acc-item accordion-item">
 		    	<h2 class="accordion-header">
 			      	<button class="menu-acc-btn accordion-button ${parentVO.flagSelected eq 'Y' ? '' : 'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#menu${status.index}" aria-expanded="false" aria-controls="menu${status.index}">
-			        	${parentVO.title}
+						<c:out value="${parentVO.title}"/>
 			      	</button>
 		    	</h2>
 		    	<div id="menu${status.index}" class="accordion-collapse collapse ${parentVO.flagSelected eq 'Y' ? 'show' : ''}">
 		    		<c:forEach items="${parentVO.childList}" var="childVO">
-		      			<div class="menu-sub d-flex align-items-center ${childVO.flagSelected eq 'Y' ? 'menu-sub-selected' : ''}" onclick="goToPage('${parentVO.path}${childVO.path}')">${childVO.title}</div>
+						<div class="menu-sub d-flex align-items-center ${childVO.flagSelected eq 'Y' ? 'menu-sub-selected' : ''}" onclick="goToPage('${parentVO.path}${childVO.path}')"><c:out value="${childVO.title}"/></div>
 		      		</c:forEach>
 		    	</div>
 		  	</div>

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.Util;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveMap;
 import com.geekive.geekiveArchiveAdmin.mapper.service.CommonService;
@@ -28,6 +29,7 @@ public class CommonController {
 			String subPath = request.getAttribute("subPath").toString();
 			GeekiveMap gMap = new GeekiveMap();
 			gMap.put("subPathArray", Util.splitSubPath(subPath));
+			gMap.put("korean", MessageUtil.isKorean());
 			
 			profileImageUrlPath = commonService.selectProfileImageUrlPath(gMap);
 			menuList 			= commonService.selectAllMenu(gMap);

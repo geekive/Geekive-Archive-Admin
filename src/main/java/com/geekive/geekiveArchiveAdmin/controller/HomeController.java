@@ -32,6 +32,11 @@ public class HomeController {
 		
 		return "home/home";
 	}
+
+	@GetMapping(value = "/sso")
+	public String sso() {
+		return "redirect:/";
+	}
 	
 	@ResponseBody
 	@PostMapping(value = "/errorImage")

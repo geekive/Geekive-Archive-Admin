@@ -2,6 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.geekive.geekiveArchiveAdmin.mapper.CommonMapper">
+	<sql id="localizedMenuTitle">
+		<choose>
+			<when test="korean">COALESCE(NULLIF(TRIM(M.TITLE_KO), ''), M.TITLE_EN)</when>
+			<otherwise>M.TITLE_EN</otherwise>
+		</choose>
+	</sql>
+
 	<select id="selectAllMenu" parameterType="GeekiveMap" resultType="HashMap">
 		/* commonMapper.selectAllMenu */
 		SELECT 
@@ -9,7 +16,7 @@
 			, NVL(M.PARENT_MENU_UID, '')  		AS parentMenuUid
 			, M.DEPTH 							AS depth
 			, M.`ORDER`           				AS `order`
-		  	, M.TITLE             				AS title
+			, <include refid="localizedMenuTitle"/> AS title
 		  	, M.PATH              				AS path
 		  	, M.REGISTRATION_DATE 				AS registrationDate
 		  	, M.REGISTRATION_USER 				AS registrationUser
@@ -36,14 +43,19 @@
 			AND U.USER_UID 			= #{userUid};
 	</select>
 	
-	<select id="selectSelectedMenuTitle" parameterType="String" resultType="String">
+	<select id="selectSelectedMenuTitle" resultType="String">
 		/* commonMapper.selectSelectedMenuTitle */
 		SELECT
-			TITLE
+			<include refid="localizedMenuTitle"/>
 		FROM
-			MENU
+			MENU M
+			LEFT JOIN MENU P ON P.MENU_UID = M.PARENT_MENU_UID
 		WHERE
-			PATH LIKE CONCAT('/', #{path}, '%')
+			CONCAT(COALESCE(P.PATH, ''), SUBSTRING_INDEX(M.PATH, '/', 2)) = #{path}
+			AND M.FLAG_DELETED = 'N'
+			AND M.FLAG_ACTIVATED = 'Y'
+		ORDER BY M.`ORDER`, M.MENU_UID
+		LIMIT 1
 	</select>
 	
 	<select id="selectProfileImageUrlPath" parameterType="GeekiveMap" resultType="String">

@@ -11,33 +11,33 @@
 		<input type="hidden" name="articleUid" value="${articleMap.articleUid}">
 	
 		<c:import url="/option/radio">
-			<c:param name="label">category</c:param>
+			<c:param name="label"><spring:message code="article.category"/></c:param>
 			<c:param name="name">categoryUid</c:param>		
 			<c:param name="codeType">category</c:param>
 			<c:param name="data">${articleMap.categoryUid}</c:param>
 		</c:import>
 		
 		<c:import url="/option/radio">
-			<c:param name="label">activated</c:param>
+			<c:param name="label"><spring:message code="state.activated"/></c:param>
 			<c:param name="name">flagActivated</c:param>
 			<c:param name="codeType">YES_NO</c:param>
 			<c:param name="data">${articleMap.flagActivated}</c:param>
 		</c:import>
 		
 		<c:import url="/option/radio">
-			<c:param name="label">private</c:param>
+			<c:param name="label"><spring:message code="article.private"/></c:param>
 			<c:param name="name">flagPrivate</c:param>
 			<c:param name="codeType">YES_NO</c:param>
 			<c:param name="data">${empty articleMap.flagPrivate ? 'N' : articleMap.flagPrivate}</c:param>
 		</c:import>
 
 		<c:import url="/option/article-viewers">
-			<c:param name="label">allowed viewers</c:param>
+			<c:param name="label"><spring:message code="article.viewers"/></c:param>
 			<c:param name="hide">${articleMap.flagPrivate ne 'Y'}</c:param>
 		</c:import>
 
 		<c:import url="/option/image">
-			<c:param name="label">thumbnail</c:param>
+			<c:param name="label"><spring:message code="article.thumbnail"/></c:param>
 			<c:param name="name">thumbnail</c:param>
 			<c:param name="crop">true</c:param>
 			<c:param name="preview">true</c:param>
@@ -45,14 +45,14 @@
 		</c:import>
 
 		<c:import url="/option/text">
-			<c:param name="label">title</c:param>
+			<c:param name="label"><spring:message code="option.code.SO-01"/></c:param>
 			<c:param name="name">title</c:param>
 			<c:param name="maxlength">100</c:param>
 			<c:param name="data">${articleMap.title}</c:param>
 		</c:import>
 	
 		<c:import url="/option/tinymce">
-			<c:param name="label">content</c:param>
+			<c:param name="label"><spring:message code="article.content"/></c:param>
 			<c:param name="id">contentEditor</c:param>
 			<c:param name="name">content</c:param>
 			<c:param name="height">500px</c:param>
@@ -62,8 +62,8 @@
 		
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-save" class="btn btn-outline-dark">save</button>
-				<button type="button" id="btn-back" class="btn btn-outline-dark">back</button>
+				<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
+				<button type="button" id="btn-back" class="btn btn-outline-dark"><spring:message code="common.back"/></button>
 			</div>
 		</div>
 	</form>
@@ -78,8 +78,8 @@
 				if(isEmpty($title.val())){
 					openModal({
 						type 		: 'alert'
-						, title		: 'content'
-						, message	: 'fill in title.'
+						, title		: '<spring:message code="article.content" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="article.titleRequired" javaScriptEscape="true"/>'
 						, close		: function(){
 							$title.focus();
 						}
@@ -89,8 +89,8 @@
 				if(isEmpty(tinymceEditor.getContent())){
 					openModal({
 						type 		: 'alert'
-						, title		: 'content'
-						, message	: 'fill in content.'
+						, title		: '<spring:message code="article.content" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="article.contentRequired" javaScriptEscape="true"/>'
 						, close		: function(){
 							tinymceEditor.focus();
 						}
@@ -112,8 +112,8 @@
 						if(data.resultCode == 1){
 							openModal({
 								type 		: 'alert'
-								, title		: 'category'
-								, message	: 'data has been successfully saved.'
+								, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
+								, message	: '<spring:message code="common.saved" javaScriptEscape="true"/>'
 								, close		: function(){
 									goToPage('/content/article/view?articleUid=' + data.articleUid);
 								}
@@ -121,7 +121,7 @@
 						}else if(data.resultCode == 0){
 							openModal({
 								type 		: 'alert'
-								, title		: 'category'
+								, title		: '<spring:message code="article.category" javaScriptEscape="true"/>'
 								, message	: data.resultMessage
 							})
 						}

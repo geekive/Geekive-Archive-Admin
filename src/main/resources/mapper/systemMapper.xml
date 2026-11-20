@@ -9,7 +9,8 @@
 			, NVL(PARENT_MENU_UID, '')  		AS parentMenuUid
 			, DEPTH 							AS depth
 			, `ORDER`           				AS `order`
-		  	, TITLE             				AS title
+			, TITLE_EN							AS titleEn
+			, TITLE_KO							AS titleKo
 		  	, PATH              				AS path
 		  	, FLAG_ACTIVATED					AS flagActivated
 		  	, FLAG_DELETED      				AS flagDeleted
@@ -28,7 +29,8 @@
 			</if>
 			, DEPTH
 			, `ORDER`
-			, TITLE
+			, TITLE_EN
+			, TITLE_KO
 			, PATH
 			, REGISTRATION_DATE
 			, REGISTRATION_USER
@@ -38,7 +40,7 @@
 			<if test="parentMenuUid != null and parentMenuUid != ''">
 				, #{parentMenuUid}
 			</if>
-			, ${depth}
+			, #{depth}
 			<choose>
 				<when test="parentMenuUid != null and parentMenuUid != ''">
 					, (SELECT IFNULL(MAX(M.`ORDER`), 0) + 1 FROM MENU M WHERE M.PARENT_MENU_UID = #{parentMenuUid})
@@ -47,7 +49,8 @@
 					, (SELECT IFNULL(MAX(M.`ORDER`), 0) + 1 FROM MENU M WHERE M.DEPTH = 1)
 				</otherwise>
 			</choose>
-			, #{title}
+			, #{titleEn}
+			, NULLIF(#{titleKo,jdbcType=VARCHAR}, '')
 			, #{path}
 			, NOW()
 			, #{userUid}
@@ -59,7 +62,10 @@
 		/* systemMapper.updateMenu */
 		UPDATE MENU
 		SET 
-		    TITLE       		= #{title} 
+			TITLE_EN			= #{titleEn}
+			<if test="_parameter.containsKey('titleKo')">
+				, TITLE_KO = NULLIF(#{titleKo,jdbcType=VARCHAR}, '')
+			</if>
 		    , PATH          	= #{path}
 		    , UPDATE_DATE		= NOW()
 		    , UPDATE_USER		= #{userUid}

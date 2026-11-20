@@ -8,7 +8,7 @@
 	<div class="opt-content col d-flex align-items-center">
 		<div class="opt-txt">
 			<div id="article-viewer-lookup" class="position-relative">
-				<input type="search" class="form-control" id="article-viewer-query" placeholder="Search by archive name" maxlength="40" autocomplete="off" aria-controls="article-viewer-results">
+				<input type="search" class="form-control" id="article-viewer-query" placeholder="<spring:message code='article.searchViewer' htmlEscape='true'/>" maxlength="40" autocomplete="off" aria-controls="article-viewer-results">
 				<div id="article-viewer-suggestions" class="article-viewer-suggestions position-absolute top-100 start-0 w-100 bg-white border rounded-bottom shadow-sm overflow-auto" hidden>
 					<div id="article-viewer-status" class="small px-3 py-2" role="status"></div>
 					<div id="article-viewer-results" class="list-group list-group-flush"></div>
@@ -19,7 +19,7 @@
 					<li class="badge article-viewer-badge bg-white text-dark border border-dark rounded-pill d-inline-flex align-items-center gap-1 fw-normal text-wrap text-break mw-100" data-viewer-uid="<c:out value='${viewer.userUid}'/>">
 						<img class="article-viewer-avatar rounded-circle flex-shrink-0" src="<c:out value='${viewer.profileImageUrlPath}'/>" alt="" onerror="this.onerror = null; getErrorImageUrl(this, 'profile');">
 						<span><c:out value="${viewer.archiveName}"/></span>
-						<button type="button" class="btn-close flex-shrink-0 remove-article-viewer" aria-label="Remove <c:out value='${viewer.archiveName}'/>"></button>
+						<button type="button" class="btn-close flex-shrink-0 remove-article-viewer" aria-label="<spring:message code='common.remove' htmlEscape='true'/> <c:out value='${viewer.archiveName}'/>"></button>
 					</li>
 				</c:forEach>
 			</ul>
@@ -131,25 +131,25 @@
 		}
 
 		function searchViewerSuggestions(query) {
-			$viewerStatus.text('Searching…');
+			$viewerStatus.text('<spring:message code="common.searching" javaScriptEscape="true"/>');
 			$viewerSuggestions.prop('hidden', false);
 			viewerSearch = $.getJSON(getFullPath('/content/article/viewer-search'), {query: query}).done(function(users) {
 				const selected = selectedViewerUids();
 				const available = users.filter(user => !selected.includes(user.userUid));
-				$viewerStatus.text(available.length ? '' : 'No matching users to add.');
+				$viewerStatus.text(available.length ? '' : '<spring:message code="article.viewerNoMatch" javaScriptEscape="true"/>');
 				available.forEach(function(user) {
 					$('<button>', {type: 'button', class: 'list-group-item list-group-item-action d-flex align-items-center gap-2'})
 						.append(createViewerAvatar(user), $('<span>').text(user.archiveName))
 						.on('click', function() {
 							if (selectedViewerUids().length >= 100) {
-								$viewerStatus.text('Select at most 100 viewers.');
+								$viewerStatus.text('<spring:message code="article.viewerLimit" javaScriptEscape="true"/>');
 								return;
 							}
 						$('<li>', {class: 'badge article-viewer-badge bg-white text-dark border border-dark rounded-pill d-inline-flex align-items-center gap-1 fw-normal text-wrap text-break mw-100'})
 								.attr('data-viewer-uid', user.userUid)
 								.append(createViewerAvatar(user))
 								.append($('<span>').text(user.archiveName))
-								.append($('<button>', {type: 'button', class: 'btn-close flex-shrink-0 remove-article-viewer', 'aria-label': 'Remove ' + user.archiveName}))
+								.append($('<button>', {type: 'button', class: 'btn-close flex-shrink-0 remove-article-viewer', 'aria-label': '<spring:message code="common.remove" javaScriptEscape="true"/> ' + user.archiveName}))
 								.appendTo($viewerSelection);
 							updateViewerUids();
 							clearViewerSuggestions();
@@ -158,7 +158,7 @@
 				});
 			}).fail(function(_, status) {
 				if (status !== 'abort') {
-					$viewerStatus.text('Search failed. Try again.');
+					$viewerStatus.text('<spring:message code="article.viewerSearchFailed" javaScriptEscape="true"/>');
 				}
 			});
 		}

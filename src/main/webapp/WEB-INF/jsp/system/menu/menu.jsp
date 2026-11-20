@@ -14,41 +14,48 @@
 			<div class="menu-option-wrapper col-xl-8">
 				
 				<c:import url="/option/radio">
-					<c:param name="label">depth</c:param>
+					<c:param name="label"><spring:message code="settings.depth"/></c:param>
 					<c:param name="name">depth</c:param>
 					<c:param name="codeType">MENU_DEPTH</c:param>
 				</c:import>
 			
 				<c:import url="/option/radio">
-					<c:param name="label">activated</c:param>
+					<c:param name="label"><spring:message code="state.activated"/></c:param>
 					<c:param name="name">flagActivated</c:param>
 					<c:param name="codeType">YES_NO</c:param>
 				</c:import>
 			
 	 			<c:import url="/option/text">
-					<c:param name="label">parent menu</c:param>
+					<c:param name="label"><spring:message code="settings.parentMenu"/></c:param>
 					<c:param name="name">parentMenu</c:param>
-					<c:param name="placeholder">choose parent menu in the left section.</c:param>
+					<c:param name="placeholder"><spring:message code="settings.chooseParentMenu"/></c:param>
 					<c:param name="readonly">true</c:param>
 					<c:param name="hide">true</c:param>
 				</c:import>
 				
 				<c:import url="/option/text">
-					<c:param name="label">menu name</c:param>
-					<c:param name="name">title</c:param>
+					<c:param name="label"><spring:message code="settings.menuName"/></c:param>
+					<c:param name="name">titleEn</c:param>
+					<c:param name="maxlength">255</c:param>
+				</c:import>
+
+				<c:import url="/option/text">
+					<c:param name="label"><spring:message code="settings.menuNameKo"/></c:param>
+					<c:param name="name">titleKo</c:param>
+					<c:param name="maxlength">255</c:param>
 				</c:import>
 				
 				<c:import url="/option/text">
-					<c:param name="label">url path</c:param>
+					<c:param name="label"><spring:message code="settings.url"/></c:param>
 					<c:param name="name">path</c:param>
 				</c:import>
 				
 				<div class="btn-wrapper row">
 					<div class="col-xxl-12 text-end">
-						<button type="button" id="btn-mode" class="btn btn-outline-dark">edit mode</button>
-						<button type="button" id="btn-save" class="btn btn-outline-dark">save</button>
-						<button type="button" id="btn-reset" class="btn btn-outline-dark">reset</button>
-						<button type="button" id="btn-delete" class="btn btn-outline-danger hide">delete</button>
+						<button type="button" id="btn-mode" class="btn btn-outline-dark"><spring:message code="settings.editMode"/></button>
+						<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
+						<button type="button" id="btn-reset" class="btn btn-outline-dark"><spring:message code="common.reset"/></button>
+						<button type="button" id="btn-delete" class="btn btn-outline-danger hide"><spring:message code="common.delete"/></button>
 					</div>
 				</div>
 			</div>
@@ -62,12 +69,18 @@
 					, $depth 			: $('input[name="depth"]')
 					, $flagActivated 	: $('input[name="flagActivated"]')
 					, $parentMenu		: $('input[name="parentMenu"]')
-					, $title 			: $('input[name="title"]')
+					, $titleEn			: $('input[name="titleEn"]')
+					, $titleKo			: $('input[name="titleKo"]')
 					, $path 			: $('input[name="path"]')
 					, $btnDelete		: $('#btn-delete')
 					, $menuUid 			: $('input[name="menuUid"]')
 					, $parentMenuUid 	: $('input[name="parentMenuUid"]')
 					, $currentMode 		: $('input[name="currentMode"]')
+			}
+			const korean = document.documentElement.lang === 'ko';
+
+			function getMenuLabel(menu) {
+				return korean && menu.titleKo ? menu.titleKo : menu.titleEn;
 			}
 			
 			/* jstree -------------------------------------- start */
@@ -86,9 +99,11 @@
 							jstreeData.push({
 								'id' 		: menu.menuUid
 								, 'parent'	: '#'
-								, 'text' 	: menu.title
+								, 'text' 	: getMenuLabel(menu)
 								, 'data' 	: {
 									depth 			: menu.depth
+									, titleEn 		: menu.titleEn
+									, titleKo 		: menu.titleKo
 									, path 			: menu.path
 									, flagActivated : menu.flagActivated
 									}
@@ -98,9 +113,11 @@
 								jstreeData.push({
 									'id' 		: child.menuUid
 									, 'parent'	: child.parentMenuUid
-									, 'text' 	: child.title
+									, 'text' 	: getMenuLabel(child)
 									, 'data' 	: {
 										depth 			: child.depth
+										, titleEn 		: child.titleEn
+										, titleKo 		: child.titleKo
 										, path 			: child.path
 										, flagActivated	: child.flagActivated
 									}
@@ -112,7 +129,7 @@
 					}else if(data.resultCode == 0){
 						openModal({
 							type 		: 'alert'
-							, title		: 'login'
+							, title		: '<spring:message code="common.login" javaScriptEscape="true"/>'
 							, message	: data.resultMessage
 						})
 					}
@@ -123,6 +140,7 @@
     		function fnDrawJstree(jstreeData){
     			obj.$jstree.jstree({
 					'core' : {
+						'force_text': true,
 					    'data' 		: jstreeData
 						, 'themes' 	: {
 							'icons' : false 
@@ -172,7 +190,8 @@
         		 		obj.$parentMenu.val(obj.$jstree.jstree(true).get_node(node.parent).text);
         		 		obj.$parentMenuUid.val(node.parent);
         		 	}
-        		    obj.$title.val(node.text);
+					obj.$titleEn.val(node.data.titleEn);
+					obj.$titleKo.val(node.data.titleKo || '');
         		 	obj.$path.val(node.data.path);
     		    }
     		}
@@ -210,7 +229,7 @@
     			obj.$currentMode.val(targetMode);
     			
     			// modify mode button
-    			$('#btn-mode').attr('attr-current-mode', targetMode).html((targetMode == 'add' ? 'edit' : 'add') + ' mode');
+				$('#btn-mode').attr('attr-current-mode', targetMode).html(targetMode == 'add' ? '<spring:message code="settings.editMode" javaScriptEscape="true"/>' : '<spring:message code="settings.addMode" javaScriptEscape="true"/>');
 			}
     		
 			// save button
@@ -221,19 +240,19 @@
     				if(isEmpty(obj.$parentMenuUid.val())){
     					openModal({
     						type 		: 'alert'
-    						, title		: 'menu'
-    						, message	: 'choose parent menu.'
+							, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+							, message	: '<spring:message code="settings.parentMenuRequired" javaScriptEscape="true"/>'
     					})
     					return
     				}
     			}
-    			if(isEmpty(obj.$title.val())){
+				if(isEmpty(obj.$titleEn.val())){
 					openModal({
 						type 		: 'alert'
-						, title		: 'menu'
-						, message	: 'fill in menu\'s name.'
+						, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="settings.menuRequired" javaScriptEscape="true"/>'
 						, close		: function(){
-							obj.$title.focus();
+							obj.$titleEn.focus();
 						}
 					})
 					return
@@ -241,8 +260,8 @@
     			if(isEmpty(obj.$path.val())){
     				openModal({
 						type 		: 'alert'
-						, title		: 'menu'
-						, message	: 'fill in url path.'
+						, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="settings.urlRequired" javaScriptEscape="true"/>'
 						, close		: function(){
 							obj.$path.focus();
 						}
@@ -259,8 +278,8 @@
 						if(data.resultCode == 1){
 							openModal({
 								type 		: 'alert'
-								, title		: 'menu'
-								, message	: 'data has been successfully saved.'
+								, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+								, message	: '<spring:message code="common.saved" javaScriptEscape="true"/>'
 								, close		: function(){
 									location.reload();
 								}
@@ -268,7 +287,7 @@
 						}else if(data.resultCode == 0){
 							openModal({
 								type 		: 'alert'
-								, title		: 'menu'
+								, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
 								, message	: data.resultMessage
 							})
 						}
@@ -288,7 +307,8 @@
     			obj.$flagActivated.first().prop('checked', true);
     			obj.$parentMenu.val('');
     			obj.$parentMenuUid.val('');
-    			obj.$title.val('');
+				obj.$titleEn.val('');
+				obj.$titleKo.val('');
     			obj.$path.val('');
     			obj.$menuUid.val('');
     			obj.$jstree.jstree(true).deselect_all(); // deselect jstree
@@ -302,17 +322,17 @@
 				if(node.children.length > 0){
 					openModal({
 						type 		: 'alert'
-						, title		: 'menu'
-						, message	: 'this menu has sub menu(s) so it\'s impossible to delete it.'
+						, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="settings.menuHasChildren" javaScriptEscape="true"/>'
 					})
 					return
 				}
 				
 				openModal({
 					type 		: 'confirm'
-					, title		: 'menu'
-					, message	: 'are you sure to delete the menu?'
-					, button	: 'delete'
+					, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="settings.confirmDeleteMenu" javaScriptEscape="true"/>'
+					, button	: '<spring:message code="common.delete" javaScriptEscape="true"/>'
 					, confirm	: function(){
 						$.ajax({
 							type	: 'post',
@@ -323,8 +343,8 @@
 								if(data.resultCode == 1){
 									openModal({
 										type 		: 'alert'
-										, title		: 'menu'
-										, message	: 'data has been successfully deleted.'
+										, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
+										, message	: '<spring:message code="common.deleted" javaScriptEscape="true"/>'
 										, close		: function(){
 											location.reload();
 										}
@@ -333,7 +353,7 @@
 								}else if(data.resultCode == 0){
 									openModal({
 										type 		: 'alert'
-										, title		: 'menu'
+										, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
 										, message	: data.resultMessage
 									})
 								}
@@ -357,11 +377,11 @@
     		})
     		
     		// menu name input text
-    		obj.$title.on('focusout', function(){
+			obj.$titleEn.on('focusout', function(){
     			$(this).val($.trim($(this).val()));
-    			let title = $(this).val();
-    			if(isNotEmpty(title) && obj.$currentMode.val() == 'add'){
-    				obj.$path.val('/' + title.replace(/\s+/g, '').trim());
+				let titleEn = $(this).val();
+				if(isNotEmpty(titleEn) && obj.$currentMode.val() == 'add'){
+					obj.$path.val('/' + titleEn.replace(/\s+/g, '').trim());
     			}
     		});
 			/* event --------------------------------------- end */

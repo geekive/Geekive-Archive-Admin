@@ -23,8 +23,8 @@
 					fnReset();
 					openModal({
 						type 		: 'alert'
-						, title		: 'article'
-						, message	: 'only image file is allowed.'
+						, title		: '<spring:message code="article.label" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="common.imageOnly" javaScriptEscape="true"/>'
 					})
 					return
 				}
@@ -34,8 +34,8 @@
 						if(isEmpty(res)){
 							openModal({
 								type 		: 'alert'
-								, title		: 'preview'
-								, message	: 'Failed to load preview image.'
+								, title		: '<spring:message code="common.preview" javaScriptEscape="true"/>'
+								, message	: '<spring:message code="common.previewFailed" javaScriptEscape="true"/>'
 							})
 							return
 						}
@@ -89,8 +89,8 @@
 	        if(isEmpty($userName.val())){
 	        	openModal({
                     type		: 'alert'
-                    , title		: 'profile'
-                    , message	: 'Fill in user name.'
+                    , title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+                    , message	: '<spring:message code="profile.nameRequired" javaScriptEscape="true"/>'
                     , close		: function(){
                     	$userName.focus();
                     }
@@ -102,8 +102,8 @@
 	        if(isEmpty(archiveName)){
 	        	openModal({
                     type		: 'alert'
-                    , title		: 'Profile'
-                    , message	: 'Fill in archive name.'
+                    , title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+                    , message	: '<spring:message code="profile.archiveRequired" javaScriptEscape="true"/>'
                     , close		: function(){
                     	$archiveName.focus();
                     }
@@ -120,7 +120,7 @@
 	        if(checkResponse.resultCode == 0){
 	        	openModal({
         			type: 'alert'
-        			, title: 'Profile'
+					, title: '<spring:message code="profile.label" javaScriptEscape="true"/>'
         			, message : checkResponse.resultMessage
         			, close : function(){
         				$archiveName.focus();
@@ -139,7 +139,7 @@
 		        if(archiveNameResponse.resultCode == 0){
 		        	openModal({
 	        			type: 'alert'
-	        			, title: 'Profile'
+						, title: '<spring:message code="profile.label" javaScriptEscape="true"/>'
 	        			, message : archiveNameResponse.resultMessage
 	        			, close : function(){
 	        				$archiveName.val(initialArchiveName).focus();
@@ -159,8 +159,8 @@
 	        	if(password != passwordCheck){
 	        		openModal({
 	                    type		: 'alert'
-	                    , title		: 'Profile'
-	                    , message	: 'Password do not match.'
+	                    , title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+	                    , message	: '<spring:message code="profile.passwordMismatch" javaScriptEscape="true"/>'
 	                    , close		: function(){
 	                    	$password.focus();
 	                    }
@@ -179,7 +179,7 @@
 		        });
 		        let modalParam = {
 	                type 		: 'alert'
-	                , title 	: 'Profile'
+	                , title 	: '<spring:message code="profile.label" javaScriptEscape="true"/>'
 	                , message 	: updateResponse.resultMessage
 	                , close 	: () => {
 	                	if(updateResponse.resultCode == 1){
@@ -193,9 +193,9 @@
 	        if(isNotEmpty($flagArchiveNameUpdate.val())){
 	    		openModal({
 					type 		: 'confirm'
-					, title		: 'Profile'
-					, message	: 'You seem to have changed the archive name. Once the archive name changes, you cannot change it for 1 week. Are you sure to save?'
-					, button	: 'Save'
+					, title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="profile.confirmArchiveChange" javaScriptEscape="true"/>'
+					, button	: '<spring:message code="common.save" javaScriptEscape="true"/>'
 					, confirm	: function(){
 						fnUpdate();
 					}
@@ -209,9 +209,9 @@
 		$btnDelete.on('click', function(){
 			openModal({
 				type 		: 'confirm'
-				, title		: 'Profile'
-				, message	: 'You seem to have changed the archive name. Once the archive name changes, you cannot change it for 1 week. Are you sure to save?'
-				, button	: 'Save'
+				, title		: '<spring:message code="profile.label" javaScriptEscape="true"/>'
+				, message	: '<spring:message code="profile.confirmArchiveChange" javaScriptEscape="true"/>'
+				, button	: '<spring:message code="common.save" javaScriptEscape="true"/>'
 				, confirm	: function(){
 					fnUpdate();
 				}
@@ -231,42 +231,42 @@
 
 		<div class="profile-opt-wrapper">
 			<c:import url="/option/text">
-				<c:param name="label">Email</c:param>
+				<c:param name="label"><spring:message code="profile.email"/></c:param>
 				<c:param name="maxlength">100</c:param>
 				<c:param name="readonly">true</c:param>
 				<c:param name="data">${userMap.email}</c:param>
 			</c:import>
 			
 			<c:import url="/option/text">
-				<c:param name="label">Name</c:param>
+				<c:param name="label"><spring:message code="profile.name"/></c:param>
 				<c:param name="name">userName</c:param>
 				<c:param name="maxlength">20</c:param>
 				<c:param name="data">${userMap.userName}</c:param>
 			</c:import>
 			
 			<c:import url="/option/text">
-				<c:param name="label">Archive</c:param>
+				<c:param name="label"><spring:message code="profile.archive"/></c:param>
 				<c:param name="name">archiveName</c:param>
 				<c:param name="maxlength">10</c:param>
 				<c:param name="data">${userMap.archiveName}</c:param>
 			</c:import>
 			
 			<c:import url="/option/password">
-				<c:param name="label">Password</c:param>
+				<c:param name="label"><spring:message code="profile.password"/></c:param>
 				<c:param name="name">password</c:param>
 			</c:import>
 			
 			<c:import url="/option/password">
-				<c:param name="label">Confirm</c:param>
+				<c:param name="label"><spring:message code="common.confirm"/></c:param>
 				<c:param name="id">passwordCheck</c:param>
-				<c:param name="placeholder">Confirm password</c:param>
+				<c:param name="placeholder"><spring:message code="profile.confirmPassword"/></c:param>
 			</c:import>
 		</div>
 		
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-save" class="btn btn-outline-dark">Save</button>
-				<button type="button" id="btn-delete" class="btn btn-outline-danger">Delete account</button>
+				<button type="button" id="btn-save" class="btn btn-outline-dark"><spring:message code="common.save"/></button>
+				<button type="button" id="btn-delete" class="btn btn-outline-danger"><spring:message code="profile.deleteAccount"/></button>
 			</div>
 		</div>
 	</form>

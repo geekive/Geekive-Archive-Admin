@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.Constants;
 import com.geekive.geekiveArchiveAdmin.common.Util;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveConnector;
@@ -136,12 +137,12 @@ public class ContentController {
 			Object flagPrivate = gMap.get("flagPrivate");
 			if (gMap.containsKey("flagPrivate") && !"Y".equals(flagPrivate) && !"N".equals(flagPrivate)) {
 				gMap.put("resultCode", 0);
-				gMap.put("resultMessage", "select a valid private setting.");
+				gMap.put("resultMessage", MessageUtil.getMessage("article.invalidPrivacy"));
 				return gMap;
 			}
 			List<String> viewers = viewerUids == null ? null : parseViewerUids(viewerUids);
 			if (viewers != null && !"Y".equals(flagPrivate) && !viewers.isEmpty()) {
-				throw new IllegalArgumentException("Only private articles can have selected viewers.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("article.privateRequired"));
 			}
 			if(thumbnail != null) {
 				GeekiveConnector gConntector = new GeekiveConnector.Builder(url).data(thumbnail).build();
@@ -157,7 +158,7 @@ public class ContentController {
 			gMap.put("resultCode", 1);
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -168,16 +169,16 @@ public class ContentController {
 			return new ArrayList<>(viewers);
 		}
 		if (value.length() > 4099) {
-			throw new IllegalArgumentException("Select at most 100 viewers.");
+			throw new IllegalArgumentException(MessageUtil.getMessage("article.viewerLimit"));
 		}
 		for (String viewer : value.split(",", -1)) {
 			if (viewer.isEmpty() || viewer.length() > 40) {
-				throw new IllegalArgumentException("Invalid viewer selection.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("article.viewerInvalid"));
 			}
 			viewers.add(viewer);
 		}
 		if (viewers.size() > 100) {
-			throw new IllegalArgumentException("Select at most 100 viewers.");
+			throw new IllegalArgumentException(MessageUtil.getMessage("article.viewerLimit"));
 		}
 		return new ArrayList<>(viewers);
 	}
@@ -191,11 +192,11 @@ public class ContentController {
 				contentService.deleteArticle(gMap);
 			}else {
 				gMap.put("resultCode"	, 0);
-				gMap.put("resultMessage", "cannot find key value.");
+				gMap.put("resultMessage", MessageUtil.getMessage("article.notFound"));
 			}
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -234,7 +235,7 @@ public class ContentController {
 			}
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -252,7 +253,7 @@ public class ContentController {
 			}
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -264,7 +265,7 @@ public class ContentController {
 			contentService.deleteCategory(gMap);
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}

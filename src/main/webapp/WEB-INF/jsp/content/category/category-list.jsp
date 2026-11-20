@@ -35,11 +35,11 @@
 			, data			:  JSON.stringify({categoryArray : categoryArray})
 			, success		: function(data){
 				if(data.resultCode == 1){
-					openToast('the new order has been saved.');
+					openToast('<spring:message code="common.orderSaved" javaScriptEscape="true"/>');
 				}else if(data.resultCode == 0){
 					openModal({
 						type 		: 'alert'
-						, title		: 'menu'
+						, title		: '<spring:message code="settings.menu" javaScriptEscape="true"/>'
 						, message	: data.resultMessage
 					})
 				}

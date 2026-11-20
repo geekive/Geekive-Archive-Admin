@@ -5,8 +5,8 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
 <div id="toast" class="toast align-items-center border-0 toast-bg" role="alert" aria-live="assertive" aria-atomic="true">
 	<div class="d-flex">
-		<div class="toast-body">Hello, world! This is a toast message.</div>
-		<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+		<div class="toast-body"><spring:message code="common.notice"/></div>
+		<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="<spring:message code='common.close' htmlEscape='true'/>"></button>
 	</div>
 </div>
 

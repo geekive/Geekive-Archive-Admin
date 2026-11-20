@@ -26,6 +26,24 @@ function getFullPath(path){
 	return url;
 }
 
+function getAdminSessionHeaders() {
+	const context = document.getElementById('adminSessionContext');
+	return context && context.value ? {'X-Admin-Session': context.value} : {};
+}
+
+$.ajaxPrefilter(function(options, originalOptions, xhr) {
+	const context = getAdminSessionHeaders()['X-Admin-Session'];
+	if (!options.crossDomain && context) {
+		xhr.setRequestHeader('X-Admin-Session', context);
+	}
+});
+
+$(document).on('ajaxError', function(event, xhr) {
+	if (xhr.status === 409 && xhr.getResponseHeader('X-Admin-Session-Changed') === 'true') {
+		window.location.reload();
+	}
+});
+
 function goToPage(path, option){
 	const url = getFullPath(path);
 	if(isEmpty(option)){

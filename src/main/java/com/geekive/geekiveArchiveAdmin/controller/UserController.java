@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.Constants;
 import com.geekive.geekiveArchiveAdmin.common.Util;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveConnector;
@@ -44,14 +45,14 @@ public class UserController {
 	public GeekiveMap checkArchiveNameExistence(@RequestBody GeekiveMap gMap) throws Exception{
 		try {
 			if(userService.checkArchiveNameExistence(gMap)) {
-				throw new Exception("The archive name has already been signed up. Please try another archive name.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveTaken"));
 			}
 			if(Arrays.asList(Constants.BANNED_ARCHIVE_NAME).contains(gMap.getString("archiveName"))) {
-				throw new Exception("The archive name has already been signed up. Please try another archive name.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveTaken"));
 			}
 		} catch (Exception e) {
 			gMap.setResultCode(0);
-			gMap.setResultMessage(e.getMessage());
+			gMap.setResultMessage(e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -61,11 +62,11 @@ public class UserController {
 	public GeekiveMap checkArchiveNameUpdateAvailable(@RequestBody GeekiveMap gMap) throws Exception{
 		try {
 			if(!userService.checkArchiveNameUpaateAvailable(new GeekiveMap())) {
-				throw new Exception("Archive name cannot be updated for 1 week since the last update.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("profile.archiveCooldown"));
 			}
 		} catch (Exception e) {
 			gMap.setResultCode(0);
-			gMap.setResultMessage(e.getMessage());
+			gMap.setResultMessage(e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -85,13 +86,13 @@ public class UserController {
 			}
 			
 			userService.updateUser(gMap);
-			response.setResultMessage("Your request is complete.");
+			response.setResultMessage(MessageUtil.getMessage("common.saved"));
 		} catch (IllegalArgumentException e) {
 			response.setResultCode(0);
 			response.setResultMessage(e.getMessage());
 		} catch (Exception e) {
 			response.setResultCode(0);
-			response.setResultMessage("Could not save your profile. Please try again.");
+			response.setResultMessage(MessageUtil.getMessage("profile.saveFailed"));
 		}
 		return response;
 	}
@@ -102,11 +103,11 @@ public class UserController {
 		GeekiveMap gMap = new GeekiveMap();
 		try {
 			userService.deleteUser(gMap);
-			gMap.setResultMessage("Thank you for using Geekive Archive.");
+			gMap.setResultMessage(MessageUtil.getMessage("profile.goodbye"));
 			session.invalidate();
 		} catch (Exception e) {
 			gMap.setResultCode(0);
-			gMap.setResultMessage(e.getMessage());
+			gMap.setResultMessage(e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}
@@ -130,7 +131,7 @@ public class UserController {
 	        }
 		} catch (Exception e) {
 			gMap.put("resultCode"	, 0);
-			gMap.put("resultMessage", e.getMessage());
+			gMap.put("resultMessage", e instanceof IllegalArgumentException ? e.getMessage() : MessageUtil.getMessage("common.error"));
 		}
 		return gMap;
 	}

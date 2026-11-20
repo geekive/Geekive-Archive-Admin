@@ -5,9 +5,9 @@
 	<div class="opt-content col d-flex align-items-center">
  		<input type="hidden" id="${id}" name="${name}" value="${data.urlPath}">
 		<input type="file" class="hide" name="${name}" accept="image/*">
-		<input type="text" class="${preview eq true ? 'opt-file-preview' : 'opt-txt'} form-control" readonly="readonly" placeholder="click for choosing file." value="${data.originalName}">
+		<input type="text" class="${preview eq true ? 'opt-file-preview' : 'opt-txt'} form-control" readonly="readonly" placeholder="<spring:message code='common.selectFile' htmlEscape='true'/>" value="${data.originalName}">
 		<c:if test="${preview}">
-			<span class="file-img-preview">preview</span>
+			<span class="file-img-preview"><spring:message code="common.preview"/></span>
 		</c:if>
 	</div>
 </div>
@@ -33,8 +33,8 @@
 					fnReset();
 					openModal({
 						type 		: 'alert'
-						, title		: 'article'
-						, message	: 'only image file is allowed.'
+						, title		: '<spring:message code="article.label" javaScriptEscape="true"/>'
+						, message	: '<spring:message code="common.imageOnly" javaScriptEscape="true"/>'
 					})
 					return
 				}

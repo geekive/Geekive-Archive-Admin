@@ -6,7 +6,7 @@
 	<div class="opt-content col d-flex align-items-center">
 		<select class="opt-slt form-select" name="${selectName}">
 			<c:forEach items="${selectList}" var="select">
-				<option value="${select.codeValue}" <c:if test="${select.codeValue eq selectData}">selected="selected"</c:if>>${select.codeLabel}</option>
+				<option value="${select.codeValue}" <c:if test="${select.codeValue eq selectData}">selected="selected"</c:if>><spring:message code="option.code.${select.codeKey}" text="${select.codeLabel}" htmlEscape="true"/></option>
 			</c:forEach>
 		</select>
 		<input type="text" class="opt-txt form-control" autocomplete="off" name="${textName}" value="${textData}">

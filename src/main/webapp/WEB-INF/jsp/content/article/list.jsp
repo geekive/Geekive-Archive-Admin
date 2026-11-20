@@ -4,14 +4,14 @@
 <c:set var="pageContent">
 	<form id="form">
 		<c:import url="/option/checkbox">
-			<c:param name="label">category</c:param>
+			<c:param name="label"><spring:message code="article.category"/></c:param>
 			<c:param name="name">categoryUid</c:param>		
 			<c:param name="codeType">category</c:param>		
 			<c:param name="data">${categoryUidCSV}</c:param>		
 		</c:import>
 		
 	 	<c:import url="/option/search">
-			<c:param name="label">search</c:param>
+			<c:param name="label"><spring:message code="common.search"/></c:param>
 			<c:param name="selectName">searchOption</c:param>
 			<c:param name="selectData">${searchOption}</c:param>
 			<c:param name="textName">searchValue</c:param>
@@ -20,8 +20,8 @@
 		
 		<div class="opt-wrapper row">
 			<div class="col-xxl-12 text-end">
-				<button type="button" id="btn-search" class="btn btn-outline-dark">search</button>
-				<button type="button" id="btn-reset" class="btn btn-outline-dark">reset</button>
+				<button type="button" id="btn-search" class="btn btn-outline-dark"><spring:message code="common.search"/></button>
+				<button type="button" id="btn-reset" class="btn btn-outline-dark"><spring:message code="common.reset"/></button>
 			</div>
 		</div>
 		
@@ -31,12 +31,12 @@
 			<table class="table table-hover article-list-table">
 				<thead>
 					<tr>
-						<th scope="col" class="article-number-column article-full-text">number</th>
-						<th scope="col" width="10%" class="d-none d-lg-table-cell article-full-text">category</th>
-						<th scope="col" class="text-start">title</th>
-						<th scope="col" width="12%" class="d-none d-lg-table-cell">author</th>
-						<th scope="col" width="12%" class="d-none d-lg-table-cell">activation state</th>
-						<th scope="col" width="12%" class="d-none d-lg-table-cell article-full-text">date</th>
+						<th scope="col" class="article-number-column article-full-text"><spring:message code="article.number"/></th>
+						<th scope="col" width="10%" class="d-none d-lg-table-cell article-full-text"><spring:message code="article.category"/></th>
+						<th scope="col" class="text-start"><spring:message code="option.code.SO-01"/></th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell"><spring:message code="article.author"/></th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell"><spring:message code="article.activation"/></th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell article-full-text"><spring:message code="article.date"/></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -49,21 +49,21 @@
 								<td class="text-start">
 									<div class="d-flex align-items-center gap-2">
 										<c:if test="${articleMap.flagPrivate eq 'Y'}">
-											<span class="badge text-bg-dark flex-shrink-0">Private</span>
+											<span class="badge text-bg-dark flex-shrink-0"><spring:message code="article.private"/></span>
 										</c:if>
 										<span class="text-truncate"><c:out value="${articleMap.title}"/></span>
 									</div>
 								</td>
 									<td class="d-none d-lg-table-cell">${articleMap.registrationUser}</td>
-									<td class="d-none d-lg-table-cell">${articleMap.flagActivated}</td>
+									<td class="d-none d-lg-table-cell"><spring:message code="state.${articleMap.flagActivated}" text="${articleMap.flagActivated}" htmlEscape="true"/></td>
 								<td class="d-none d-lg-table-cell article-full-text">${articleMap.registrationDate}</td>
 								</tr>
 							</c:forEach>
 						</c:when>
 						<c:otherwise>
 							<tr align="center">
-								<td colspan="6" class="d-none d-lg-table-cell">No data</td>
-								<td colspan="2" class="d-lg-none">No data</td>
+								<td colspan="6" class="d-none d-lg-table-cell"><spring:message code="common.noData"/></td>
+								<td colspan="2" class="d-lg-none"><spring:message code="common.noData"/></td>
 							</tr>
 						</c:otherwise>
 					</c:choose>
@@ -75,15 +75,15 @@
 		</div>
 		
 		<div class="bottom-btn-wrapper d-flex justify-content-end">
-			<button type="button" class="btn btn-outline-dark" onclick="goToPage('/content/article/write')">write</button>
+			<button type="button" class="btn btn-outline-dark" onclick="goToPage('/content/article/write')"><spring:message code="common.write"/></button>
 		</div>
 	
 		<div class="pagination-wrapper d-flex justify-content-center">
-			<nav aria-label="Page navigation example">
+			<nav aria-label="<spring:message code='common.pagination' htmlEscape='true'/>">
 				<ul class="pagination">
 					<c:if test="${paginationMap.flagPreviousPageButtonGroup}">
 						<li class="page-item">
-							<a class="page-link" href="javascript:fnSearch('${paginationMap.pageNumberToPreviousPageButtonGroup}')" aria-label="Previous"> <span aria-hidden="true">&laquo;</span></a>
+							<a class="page-link" href="javascript:fnSearch('${paginationMap.pageNumberToPreviousPageButtonGroup}')" aria-label="<spring:message code='common.previous' htmlEscape='true'/>"> <span aria-hidden="true">&laquo;</span></a>
 						</li>
 					</c:if>
 					<c:forEach items="${paginationMap.pageNumberList}" var="pageNumber">
@@ -93,7 +93,7 @@
 					</c:forEach>
 					<c:if test="${paginationMap.flagNextPageButtonGroup}">
 						<li class="page-item">
-							<a class="page-link" href="javascript:fnSearch('${paginationMap.pageNumberToNextPageButtonGroup}')" aria-label="Next"> <span aria-hidden="true">&raquo;</span></a>
+							<a class="page-link" href="javascript:fnSearch('${paginationMap.pageNumberToNextPageButtonGroup}')" aria-label="<spring:message code='common.next' htmlEscape='true'/>"> <span aria-hidden="true">&raquo;</span></a>
 						</li>
 					</c:if>
 				</ul>

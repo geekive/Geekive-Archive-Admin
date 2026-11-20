@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.CryptoUtil;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveMap;
 import com.geekive.geekiveArchiveAdmin.mapper.ContentMapper;
@@ -40,7 +41,7 @@ public class ContentService implements ContentMapper{
 		String articleUid = article.getString("articleUid");
 		String userUid = article.getString("userUid");
 		if (!newArticle && articleViewerMapper.lockOwnedArticle(articleUid, userUid) == null) {
-			throw new IllegalArgumentException("Article not found.");
+			throw new IllegalArgumentException(MessageUtil.getMessage("article.notFound"));
 		}
 		article.put("newArticle", newArticle);
 		upsertArticle(article);
@@ -48,7 +49,7 @@ public class ContentService implements ContentMapper{
 			articleViewerMapper.deleteViewers(articleUid);
 			if ("Y".equals(article.get("flagPrivate")) && viewerUids != null && !viewerUids.isEmpty()
 					&& articleViewerMapper.insertViewers(articleUid, userUid, viewerUids) != viewerUids.size()) {
-				throw new IllegalArgumentException("One or more selected users are unavailable.");
+				throw new IllegalArgumentException(MessageUtil.getMessage("article.viewerUnavailable"));
 			}
 		}
 	}

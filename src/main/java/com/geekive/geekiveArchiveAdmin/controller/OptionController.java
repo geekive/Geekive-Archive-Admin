@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.geekive.geekiveArchiveAdmin.common.MessageUtil;
 import com.geekive.geekiveArchiveAdmin.common.Util;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveConnector;
 import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveMap;
@@ -157,7 +158,7 @@ public class OptionController {
 			responseMap 					= gConntector.sendMultiPartFile("file");
 		} catch (Exception e) {
 			responseMap.put("resultCode"	, 0);
-			responseMap.put("resultMessage", e.getMessage());
+			responseMap.put("resultMessage", MessageUtil.getMessage("common.error"));
 		}
 		return responseMap;
 	}

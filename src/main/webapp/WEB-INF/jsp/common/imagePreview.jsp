@@ -28,8 +28,8 @@
 			if(isEmpty(base64)){
 				openModal({
 					type 		: 'alert'
-					, title		: 'preview'
-					, message	: 'nothing is uploaded. upload your picture first.'
+					, title		: '<spring:message code="common.preview" javaScriptEscape="true"/>'
+					, message	: '<spring:message code="common.previewEmpty" javaScriptEscape="true"/>'
 				})
 				return
 			}

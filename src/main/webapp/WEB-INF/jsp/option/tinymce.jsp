@@ -16,6 +16,7 @@ const useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
 const isSmallScreen = window.matchMedia('(max-width: 1023.5px)').matches;
 tinymce.init({
 	selector : '#${id}'
+	, language : '${pageContext.response.locale.language eq 'ko' ? 'ko_KR' : 'en'}'
 	, plugins : 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap emoticons accordion'
 	, editimage_cors_hosts : ['picsum.photos']
 	, menubar : 'file edit view insert format tools table help'
@@ -99,22 +100,22 @@ tinymce.init({
 	, autosave_retention : '2m'
 	, image_advtab : true
 	, link_list : [
-    	{ title: 'My page 1', value: 'https://www.tiny.cloud' },
-    	{ title: 'My page 2', value: 'http://www.moxiecode.com' }
+		{ title: '<spring:message code="common.examplePage1" javaScriptEscape="true"/>', value: 'https://www.tiny.cloud' },
+		{ title: '<spring:message code="common.examplePage2" javaScriptEscape="true"/>', value: 'http://www.moxiecode.com' }
 	]
 	, image_list : [
-		{ title: 'My page 1', value: 'https://www.tiny.cloud' },
-		{ title: 'My page 2', value: 'http://www.moxiecode.com' }
+		{ title: '<spring:message code="common.examplePage1" javaScriptEscape="true"/>', value: 'https://www.tiny.cloud' },
+		{ title: '<spring:message code="common.examplePage2" javaScriptEscape="true"/>', value: 'http://www.moxiecode.com' }
 	]
 	, image_title : true
 	, image_class_list : [
-    	{ title: 'None', value: '' },
-    	{ title: 'Some class', value: 'class-name' }
+		{ title: '<spring:message code="common.none" javaScriptEscape="true"/>', value: '' },
+		{ title: '<spring:message code="common.exampleClass" javaScriptEscape="true"/>', value: 'class-name' }
  	]
 	, importcss_append : true
 	, file_picker_callback : (callback, value, meta) => {
 	    if(meta.filetype === 'file') {
-	      callback('https://www.google.com/logos/google.jpg', { text: 'My text' });
+	      callback('https://www.google.com/logos/google.jpg', { text: '<spring:message code="common.exampleText" javaScriptEscape="true"/>' });
 	    }
 	
 	    if(meta.filetype === 'image') {
@@ -150,15 +151,14 @@ tinymce.init({
 	, file_picker_callback: function(callback, value, meta){
     	const input = document.createElement('input');
 
-    	let msg = '';
     	if(meta.filetype === 'image'){
     	      input.type = 'file';
     	      input.accept = 'image/*';
-    	      msg = '이미지';
+
     	}else if(meta.filetype === 'media'){
     	      input.type = 'file';
     	      input.accept = 'video/*';
-    	      msg = '동영상';
+
     	}else{
     		return;
     	}
@@ -176,16 +176,24 @@ tinymce.init({
 
       		fetch(getFullPath('/option/upload-tinymce'), {
       			method: 'POST',
+				headers: getAdminSessionHeaders(),
       			body: formData
       		})
-      		.then(response => response.json())
+			.then(response => {
+				if (response.status === 409 && response.headers.get('X-Admin-Session-Changed') === 'true') {
+					window.location.reload();
+					return null;
+				}
+				return response.json();
+			})
       		.then(result => {
       			closeLoading();
+				if (!result) return;
       			callback(result.urlPath, { title: file.name });
       		})
       		.catch(() => {
       			closeLoading();
-      			alert(msg + ' 업로드 실패');
+				alert('<spring:message code="common.uploadFailed" javaScriptEscape="true"/>');
       		});		
     	};
 	}

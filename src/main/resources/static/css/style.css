@@ -520,7 +520,7 @@ thead {
 	.top-menu-name-bar .right-button-wrapper {
 		display: flex;
 		flex-shrink: 0;
-		gap: 8px;
+		gap: 14px;
 	}
 
 	.top-menu-name-bar .right-button-wrapper .right-button {

@@ -1,5 +1,10 @@
 package com.geekive.geekiveArchiveAdmin.mapper.service;
 
+import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +14,7 @@ import com.geekive.geekiveArchiveAdmin.geekiveCustom.GeekiveMap;
 import com.geekive.geekiveArchiveAdmin.mapper.LoginMapper;
 
 @Service
-public class LoginService implements LoginMapper{
+public class LoginService {
 	
 	@Autowired
     private CryptoUtil cryptoUtil;
@@ -17,49 +22,56 @@ public class LoginService implements LoginMapper{
 	@Autowired
 	LoginMapper loginMapper;
 
-	@Override
-	public int checkEmail(GeekiveMap gMap) {
-		try {
-			gMap.put("email", cryptoUtil.encryptData(gMap.getString("email")));
-		} catch (Exception e) {
-			e.printStackTrace();
+	public int checkEmail(String email) throws Exception {
+		if (Util.isEmpty(email)) {
+			return 0;
 		}
-		return loginMapper.checkEmail(gMap);
+		GeekiveMap query = new GeekiveMap();
+		query.put("email", cryptoUtil.encryptData(email));
+		return loginMapper.checkEmail(query);
 	}
 
-	@Override
-	public GeekiveMap selectUser(GeekiveMap gMap) {
-		GeekiveMap userMap = null;
-		try {
-			// email login
-			if(Util.isNotEmpty(gMap.getString("email"))) {
-				gMap.put("email", cryptoUtil.encryptData(gMap.getString("email")));
-				userMap = loginMapper.selectUser(gMap);
-			    if(Util.isEmpty(userMap) || !cryptoUtil.checkPassword(gMap.getString("password"), userMap.getString("password"))) {
-			        return null;
-			    }else {
-			    	userMap.remove("password");
-			    	userMap.put("userName", cryptoUtil.decryptData(userMap.getString("userName")));
-			    }
-			}
-			
-			// jwt login
-			if(Util.isNotEmpty(gMap.getString("userUid"))) {
-				userMap = loginMapper.selectUser(gMap);
-				if(Util.isEmpty(userMap)) {
-					return null;
-				}else {
-			    	userMap.remove("password");
-			    	userMap.put("userName", cryptoUtil.decryptData(userMap.getString("userName")));
-				}
-			}
-			
-			if(Util.isNotEmpty(userMap)) {
-				userMap.put("myArchiveFullUrlPath", Util.getUserServerUrl() + userMap.getString("myArchiveUrlPath"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+	public GeekiveMap authenticate(String email, String password) throws Exception {
+		if (Util.isEmpty(email) || Util.isEmpty(password)) {
+			return null;
 		}
+		GeekiveMap query = new GeekiveMap();
+		query.remove("userUid");
+		query.put("email", cryptoUtil.encryptData(email));
+		GeekiveMap userMap = loginMapper.selectUser(query);
+		if (userMap == null || !cryptoUtil.checkPassword(password, userMap.getString("password"))) {
+			return null;
+		}
+		return prepareUser(userMap);
+	}
+
+	public GeekiveMap findJwtUser(String userUid) {
+		GeekiveMap query = new GeekiveMap();
+		query.put("userUid", userUid);
+		try {
+			GeekiveMap userMap = loginMapper.selectUser(query);
+			return userMap == null ? null : prepareUser(userMap);
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	private GeekiveMap prepareUser(GeekiveMap userMap) throws Exception {
+		userMap.remove("password");
+		userMap.put("userName", cryptoUtil.decryptData(userMap.getString("userName")));
+		userMap.put("myArchiveFullUrlPath", Util.getUserServerUrl() + userMap.getString("myArchiveUrlPath"));
 		return userMap;
+	}
+
+	public static void startSession(HttpServletRequest request, GeekiveMap userMap, String signinType) {
+		HttpSession previous = request.getSession(false);
+		if (previous != null) {
+			previous.invalidate();
+		}
+		HttpSession session = request.getSession();
+		session.setAttribute("userMap", userMap);
+		session.setAttribute("signinType", signinType);
+		session.setAttribute("isSignedIn", true);
+		session.setAttribute("adminSessionContext", UUID.randomUUID().toString());
 	}
 }
