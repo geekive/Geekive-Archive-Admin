@@ -28,15 +28,15 @@
 		<hr class="opt-separation"></hr>
 		
 		<div>
-			<table class="table table-hover">
+			<table class="table table-hover article-list-table">
 				<thead>
 					<tr>
-						<th scope="col" width="3%">number</th>
-						<th scope="col" width="10%">category</th>
-						<th scope="col" width="51%">title</th>
-						<th scope="col" width="12%">author</th>
-						<th scope="col" width="12%">activation state</th>
-						<th scope="col" width="12%">date</th>
+						<th scope="col" class="article-number-column article-full-text">number</th>
+						<th scope="col" width="10%" class="d-none d-lg-table-cell article-full-text">category</th>
+						<th scope="col" class="text-start">title</th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell">author</th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell">activation state</th>
+						<th scope="col" width="12%" class="d-none d-lg-table-cell article-full-text">date</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -44,18 +44,26 @@
 						<c:when test="${!empty articleList}">
 							<c:forEach items="${articleList}" var="articleMap" varStatus="status">
 								<tr align="center" onclick="goToPage('/content/article/view?articleUid=${articleMap.articleUid}')">
-									<th scope="row">${articleMap.num}</th>
-									<td> ${articleMap.categoryName}</td>
-									<td class="truncated">${articleMap.title}</td>
-									<td>${articleMap.registrationUser}</td>
-									<td>${articleMap.flagActivated}</td>
-									<td>${articleMap.registrationDate}</td>
+									<th scope="row" class="article-full-text">${articleMap.num}</th>
+								<td class="d-none d-lg-table-cell article-full-text">${articleMap.categoryName}</td>
+								<td class="text-start">
+									<div class="d-flex align-items-center gap-2">
+										<c:if test="${articleMap.flagPrivate eq 'Y'}">
+											<span class="badge text-bg-dark flex-shrink-0">Private</span>
+										</c:if>
+										<span class="text-truncate"><c:out value="${articleMap.title}"/></span>
+									</div>
+								</td>
+									<td class="d-none d-lg-table-cell">${articleMap.registrationUser}</td>
+									<td class="d-none d-lg-table-cell">${articleMap.flagActivated}</td>
+								<td class="d-none d-lg-table-cell article-full-text">${articleMap.registrationDate}</td>
 								</tr>
 							</c:forEach>
 						</c:when>
 						<c:otherwise>
 							<tr align="center">
-								<th colspan="6">No data</th>
+								<td colspan="6" class="d-none d-lg-table-cell">No data</td>
+								<td colspan="2" class="d-lg-none">No data</td>
 							</tr>
 						</c:otherwise>
 					</c:choose>

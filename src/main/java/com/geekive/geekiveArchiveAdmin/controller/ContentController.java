@@ -109,6 +109,12 @@ public class ContentController {
 		String url = Util.getFileServerUploadUrl() + "/file";
 
 		try {
+			Object flagPrivate = gMap.get("flagPrivate");
+			if (gMap.containsKey("flagPrivate") && !"Y".equals(flagPrivate) && !"N".equals(flagPrivate)) {
+				gMap.put("resultCode", 0);
+				gMap.put("resultMessage", "select a valid private setting.");
+				return gMap;
+			}
 			if(thumbnail != null) {
 				GeekiveConnector gConntector = new GeekiveConnector.Builder(url).data(thumbnail).build();
 				GeekiveMap responseMap = gConntector.sendMultiPartFile("file");

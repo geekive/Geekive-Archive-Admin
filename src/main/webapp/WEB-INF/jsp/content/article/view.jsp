@@ -29,7 +29,12 @@
 
 		<div class="opt-wrapper row">
 			<div class="opt-label col-1 d-flex align-items-center justify-content-center">title</div>
-			<div class="opt-content col d-flex align-items-center"><c:out value="${articleMap.title}"/></div>
+			<div class="opt-content col d-flex align-items-center gap-2">
+				<c:if test="${articleMap.flagPrivate eq 'Y'}">
+					<span class="badge text-bg-dark flex-shrink-0">Private</span>
+				</c:if>
+				<span><c:out value="${articleMap.title}"/></span>
+			</div>
 		</div>
 
 		<div class="opt-wrapper row">

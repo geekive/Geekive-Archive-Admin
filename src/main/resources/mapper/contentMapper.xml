@@ -79,6 +79,7 @@
 			(
 			SELECT
 					ROW_NUMBER() OVER (ORDER BY RSLT1.REGISTRATION_DATE DESC) 	AS PAGING_INDEX
+					, RSLT1.FLAG_PRIVATE											AS flagPrivate
 					, RSLT1.NUM 												AS num
 				    , RSLT1.ARTICLE_UID 										AS articleUid
 				    , RSLT1.CATEGORY_NAME 										AS categoryName
@@ -98,6 +99,7 @@
 				(
 				SELECT 
 				    ROW_NUMBER() OVER (PARTITION BY A.USER_UID ORDER BY A.REGISTRATION_DATE ASC) 	AS NUM
+				    , A.FLAG_PRIVATE
 				    , A.ARTICLE_UID
 				    , C.CATEGORY_UID
 				    , C.CATEGORY_NAME
@@ -149,6 +151,7 @@
 			A.ARTICLE_UID 						AS articleUid
 		    , C.CATEGORY_NAME 					AS categoryName
 		    , F.URL_PATH 						AS thumbnailUrlPath
+		    , A.FLAG_PRIVATE					AS flagPrivate
 		    , A.TITLE 							AS title
 		    , A.CONTENT 						AS content
 		    , A.REGISTRATION_DATE 				AS registrationDate
@@ -185,6 +188,7 @@
 		    , UPDATE_DATE 			AS updateDate
 		    , UPDATE_USER 			AS updateUser
 		    , FLAG_ACTIVATED 		AS flagActivated
+		    , FLAG_PRIVATE 			AS flagPrivate
 		    , FLAG_DELETED 			AS flagDeleted
 		FROM 
 		    ARTICLE
@@ -204,6 +208,7 @@
 			, REGISTRATION_DATE
 			, REGISTRATION_USER
 			, FLAG_ACTIVATED
+			, FLAG_PRIVATE
 		) VALUES (
 			#{articleUid}
 			, #{categoryUid}
@@ -214,6 +219,7 @@
 			, NOW()
 		    , #{userUid}
 			, #{flagActivated}
+			, COALESCE(#{flagPrivate}, 'N')
 		)
 		ON DUPLICATE KEY UPDATE
 			CATEGORY_UID 		= #{categoryUid}
@@ -225,6 +231,7 @@
 			, UPDATE_DATE		= NOW()
 			, UPDATE_USER		= #{userUid}
 			, FLAG_ACTIVATED	= #{flagActivated}
+			, FLAG_PRIVATE		= COALESCE(#{flagPrivate}, FLAG_PRIVATE)
 	</insert>
 	
 	<update id="deleteArticle" parameterType="GeekiveMap">

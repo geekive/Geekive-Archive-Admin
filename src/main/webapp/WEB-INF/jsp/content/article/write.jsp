@@ -24,6 +24,13 @@
 			<c:param name="data">${articleMap.flagActivated}</c:param>
 		</c:import>
 		
+		<c:import url="/option/radio">
+			<c:param name="label">private</c:param>
+			<c:param name="name">flagPrivate</c:param>
+			<c:param name="codeType">YES_NO</c:param>
+			<c:param name="data">${empty articleMap.flagPrivate ? 'N' : articleMap.flagPrivate}</c:param>
+		</c:import>
+
 		<c:import url="/option/image">
 			<c:param name="label">thumbnail</c:param>
 			<c:param name="name">thumbnail</c:param>

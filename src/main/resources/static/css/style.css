@@ -408,6 +408,22 @@ thead {
 	}
 }
 
+/* content > article list */
+.article-list-table th,
+.article-list-table td {
+	white-space: nowrap;
+}
+
+.article-list-table :is(th, td):not(.article-full-text) {
+	max-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.article-list-table .article-number-column {
+	width: 5rem;
+}
+
 /* login.jsp */
 .login-container {
 	background-image: url('/admin/image/login-page-bg.png');

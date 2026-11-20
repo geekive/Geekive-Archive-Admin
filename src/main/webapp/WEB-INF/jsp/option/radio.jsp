@@ -7,8 +7,8 @@
 		<div class="row">
 			<c:forEach var="radio" items="${radioList}" varStatus="status">
 				<div class="opt-radio col-1">
-					<input class="form-check-input" type="radio" id="checkbox-${radio.radioKey}" key="${radio.radioKey}" name="${name}" value="${radio.radioValue}" ${(!empty data && (data eq radio.radioKey || data eq radio.radioValue)) || status.index eq 0 ? 'checked' : ''}> 
-					<label class="form-check-label" for="checkbox-${radio.radioKey}">${radio.radioLabel}</label>
+					<input class="form-check-input" type="radio" id="radio-${name}-${radio.radioKey}" key="${radio.radioKey}" name="${name}" value="${radio.radioValue}" ${(empty data ? status.first : (data eq radio.radioKey || data eq radio.radioValue)) ? 'checked' : ''}>
+					<label class="form-check-label" for="radio-${name}-${radio.radioKey}">${radio.radioLabel}</label>
 				</div>
 			</c:forEach>
 		</div>
