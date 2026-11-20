@@ -13,14 +13,14 @@
 					</div>
 					<div class="mb-3 row">
 						<label for="email" class="col-xl-2 col-form-label">Email</label>
-						<div class="email-text-warpper col-sm-10">
-							<input type="text" class="form-control" id="email" name="email">
+						<div class="col-12 col-xl-10">
+							<input type="text" class="form-control" id="email" name="email" inputmode="email" autocomplete="username">
 						</div>
 					</div>
-					<div class="mb-3 row hide">
+					<div id="login-password-row" class="mb-3 row hide">
 						<label for="password" class="col-xl-2 col-form-label">Password</label>
-						<div class="email-password-warpper col-sm-10">
-							<input type="password" class="form-control" id="password" name="password">
+						<div class="col-12 col-xl-10">
+							<input type="password" class="form-control" id="password" name="password" autocomplete="current-password">
 						</div>
 					</div>
 					<div class="row">
@@ -37,25 +37,6 @@
 		$(document).ready(function(){
 			
 			$('#email').focus();
-			
-			/* resize dom : start */
-			let fnGaResize = function(){
-				let windowWidth = $(window).width();
-		        let $wrappers	= $('.email-text-warpper, .email-password-warpper');
-		        
-				if(windowWidth > 1199 || windowWidth <= 575){
-		        	$wrappers.removeClass('col-sm-12').addClass('col-sm-10');
-		        }else{
-		        	$wrappers.removeClass('col-sm-10').addClass('col-sm-12');
-		        }
-			}
-			
-			fnGaResize();
-			
-			$(window).resize(function(){
-				fnGaResize();
-			});
-			/* resize dom : end */
 			
 			/* login process : start */
 			$('#btn-continue').on('click', function(){
@@ -110,7 +91,7 @@
 						success		: function(data){
 							if(data.resultCode == 1){
 								$email.attr('readonly', true).on('input', () => goToPage('/'));
-								$('.email-password-warpper').parent().removeClass('hide');
+								$('#login-password-row').removeClass('hide');
 								$('#btn-login').removeClass('hide');
 								$('input[name="password"]').focus();
 								$btn.hide();		

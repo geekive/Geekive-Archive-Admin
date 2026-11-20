@@ -351,6 +351,63 @@ thead {
 	margin-left: 250px;
 }
 
+@media (max-width: 991.98px) {
+	.admin-menu-panel {
+		--bs-offcanvas-width: 250px;
+		--bs-offcanvas-bg: #292929;
+	}
+
+	.admin-menu-panel .menu-wrapper {
+		position: static;
+		width: 100%;
+		height: auto;
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		border-right: 0;
+	}
+
+	.content-wrapper {
+		min-width: 0;
+		margin-left: 0;
+	}
+
+	.top-menu-name-bar {
+		height: auto;
+		min-height: 52px;
+		gap: 8px;
+		padding: 4px 8px;
+	}
+
+	.top-menu-heading {
+		min-width: 0;
+		overflow-wrap: anywhere;
+	}
+
+	.admin-menu-toggle {
+		flex-shrink: 0;
+		width: 44px;
+		height: 44px;
+		padding: 0;
+		font-size: 1.75rem;
+	}
+
+	.admin-menu-toggle:focus-visible {
+		outline: 2px solid currentColor;
+		outline-offset: -2px;
+	}
+
+	.top-menu-name-bar .right-button-wrapper {
+		display: flex;
+		flex-shrink: 0;
+		gap: 8px;
+	}
+
+	.top-menu-name-bar .right-button-wrapper .right-button {
+		margin-right: 0;
+	}
+}
+
 /* login.jsp */
 .login-container {
 	background-image: url('/admin/image/login-page-bg.png');
@@ -359,7 +416,8 @@ thead {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	height: 100vh;
+	min-height: 100vh;
+	min-height: 100svh;
 }
 
 .login-wrapper {
@@ -384,9 +442,26 @@ thead {
 	}
 }
 
-@media ( max-width : 675px) {
+@media (max-width: 1199.98px) {
+	.login-container {
+		padding: 24px clamp(16px, 4vw, 32px);
+	}
+
+	.login-wrapper {
+		width: min(100%, 32rem);
+		margin-bottom: clamp(24px, 8vh, 72px);
+	}
+
 	.login-ga {
-		font-size: 19pt;
+		font-size: clamp(1.375rem, 6.6vw, 2rem);
+		line-height: 1.25;
+		margin-bottom: clamp(24px, 8vw, 48px);
+		text-wrap: balance;
+	}
+
+	.login-wrapper .form-control,
+	.login-wrapper .btn {
+		min-height: 44px;
 	}
 }
 

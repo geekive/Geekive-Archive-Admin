@@ -18,13 +18,23 @@
 		<c:when test="${isLogin eq true}">
 			<div class="layout-container container-fruid d-flex">
 		
-				<c:import url="/menu">
-					<c:param name="subPath" value="${subPath}"></c:param>
-				</c:import>
+				<div class="offcanvas-lg offcanvas-start admin-menu-panel" id="admin-menu" tabindex="-1" aria-label="Admin menu">
+				<div class="d-flex d-lg-none justify-content-end p-2" data-bs-theme="dark">
+						<button type="button" class="btn-close p-2" data-bs-dismiss="offcanvas" data-bs-target="#admin-menu" aria-label="Close menu"></button>
+					</div>
+					<c:import url="/menu">
+						<c:param name="subPath" value="${subPath}"></c:param>
+					</c:import>
+				</div>
 				
 				<div class="content-wrapper">
 					<div class="top-menu-name-bar d-flex align-items-center justify-content-between">
-						<div>${currentMenuTitle}</div>
+						<div class="top-menu-heading d-flex align-items-center gap-2">
+							<button type="button" class="btn border-0 d-lg-none admin-menu-toggle" data-bs-toggle="offcanvas" data-bs-target="#admin-menu" aria-controls="admin-menu" aria-label="Open menu">
+								<i class="bi bi-list" aria-hidden="true"></i>
+							</button>
+							<div>${currentMenuTitle}</div>
+						</div>
 						<div class="right-button-wrapper">
 							<span class="right-button" onclick="window.open('${sessionScope.userMap.myArchiveFullUrlPath}','_blank')">My Archive</span>
 							<c:if test="${sessionScope.signinType eq 'normal'}">
